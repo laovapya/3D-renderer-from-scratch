@@ -24,15 +24,15 @@ private:
 public:
 	Camera();
 
-	glm::mat4 GetViewMatrix();
-	glm::mat4 GetProjectionMatrix();
+	glm::mat4 GetViewMatrix() const;
+	
 
 	void Pan(glm::vec3);
 	void Orbit(glm::vec3 angle);
 	
 
-	glm::vec3 GetRight();
-	glm::vec3 GetUp();
-	glm::vec3 GetForward();
+	glm::vec3 GetRight() const;
+	glm::vec3 GetUp() const;
+	glm::vec3 GetForward() const;
 
 };

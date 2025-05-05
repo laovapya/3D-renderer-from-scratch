@@ -3,9 +3,9 @@
 #include"VertexData.h"
 #include"DeltaTime.h"
 
-Scene::Scene(Window* window) {
+Scene::Scene(const Window* window) {
 	this->window = window;
-	currentCamera = new Camera(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	currentCamera = new Camera(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	litShader = window->GetLitShader();
 	defaultShader = window->GetDefaultShader();
@@ -44,10 +44,8 @@ void Scene::DrawGrid() {
 }
 
 //events that happen on button press should be moved away from here 
-void Scene::Update() { // into main loop
+void Scene::Update() { //goes into main loop
 	Controller::MoveCamera(window->GetWindow(), currentCamera);
-
-	
 	
 	glm::vec3 v = Controller::GetTransformVector(currentCamera);
 	for (Object3D* object : manager.GetCreatedObjects()) {
@@ -65,7 +63,7 @@ void Scene::Update() { // into main loop
 			
 		}
 		
-		Shader* shader = object->GetIfLit() ? litShader : defaultShader;
+		const Shader* shader = object->GetIfLit() ? litShader : defaultShader;
 		shader->Activate();
 		litShader->SetLightPosition(manager.GetCreatedObjects()[0]->GetPosition()); //temporary solution to move light source 
 		shader->SetViewMatrix(currentCamera->GetViewMatrix()); // projection * view * local * vector; 
@@ -90,7 +88,7 @@ void Scene::Update() { // into main loop
 
 }
 
-Window* Scene::GetWindow() {
+const Window* Scene::GetWindow() {
 	return window;
 }
 

@@ -163,11 +163,7 @@ void Window::framebuffer_size_callback(GLFWwindow* win, int width, int height)  
 }
 
 
-
-
-
-
-void Window::EarlyUpdate() {
+void Window::EarlyUpdate() const {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -176,7 +172,7 @@ void Window::EarlyUpdate() {
 	SetUpDocking(); //------------------------------------------------------------------------------------------------------------------------
 }
 
-void Window::LateUpdate() {
+void Window::LateUpdate() const {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); //before swapping buffers
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
@@ -196,34 +192,34 @@ void Window::LateUpdate() {
 
 }
 
-GLFWwindow* Window::GetWindow() {
+GLFWwindow* Window::GetWindow() const {
 	return window;
 }
-Shader* Window::GetDefaultShader() {
+const Shader* Window::GetDefaultShader() const {
 	return &defaultShader;
 }
-Shader* Window::GetLitShader() {
+const Shader* Window::GetLitShader() const {
 	return &litShader;
 }
-bool Window::GetShouldClose() {
+bool Window::GetShouldClose() const {
 	return glfwWindowShouldClose(window);;
 }
 
 
-float Window::GetWidth() {
+float Window::GetWidth() const {
 	return width;
 }
-float Window::GetHeight() {
+float Window::GetHeight() const {
 	return height;
 }
-float Window::GetAspectRatio() {
+float Window::GetAspectRatio() const {
 	return aspectRatio;
 }
 
 
 
 
-void Window::SetUpDocking()
+void Window::SetUpDocking() const
 {
 
     //static bool opt_fullscreen = true;
@@ -297,17 +293,17 @@ void Window::SetUpDocking()
 }
 
 
-ImVec2 Window::GetWidget1Dimensions() {
+ImVec2 Window::GetWidget1Dimensions() const {
 	return ImVec2(width - XRightOffset, yDownOffset);
 }
-ImVec2 Window::GetWidget2Dimensions() {
+ImVec2 Window::GetWidget2Dimensions() const {
 	return ImVec2(XRightOffset, height * 0.4f);
 }
-ImVec2 Window::GetWidget3Dimensions() {
+ImVec2 Window::GetWidget3Dimensions() const {
 	return ImVec2(XRightOffset, height * 0.6f);
 }
 
-
+//get widget4 dimensions... 
 
 
 

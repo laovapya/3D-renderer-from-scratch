@@ -78,32 +78,32 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
 }
 
 // Activates the Shader Program
-void Shader::Activate()
+void Shader::Activate() const
 {
 	glUseProgram(ID);
 }
 
 // Deletes the Shader Program
-void Shader::Delete()
+void Shader::Delete() const
 {
 	glDeleteProgram(ID);
 }
 
-void Shader::SetProjectionMatrix(glm::mat4 matrix) {
+void Shader::SetProjectionMatrix(glm::mat4 matrix) const {
 	if (projectionLoc == -1) {
 		std::cout << "Failed to find projection uniform" << std::endl;
 		return;
 	}
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(matrix));
 }
-void Shader::SetViewMatrix(glm::mat4 matrix) {
+void Shader::SetViewMatrix(glm::mat4 matrix) const{
 	if (viewMatrixLoc == -1) {
 		std::cout << "Failed to find view matrix uniform" << std::endl;
 		return;
 	}
 	glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, glm::value_ptr(matrix));
 }
-void Shader::SetLocalMatrix(glm::mat4 matrix) {
+void Shader::SetLocalMatrix(glm::mat4 matrix) const{
 	if (localMatrixLoc == -1) {
 		std::cout << "Failed to find local matrix uniform" << std::endl;
 		return;
@@ -111,7 +111,7 @@ void Shader::SetLocalMatrix(glm::mat4 matrix) {
 	glUniformMatrix4fv(localMatrixLoc, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void Shader::SetRenderColor(glm::vec3 color) {
+void Shader::SetRenderColor(glm::vec3 color) const {
 	if (colorLoc == -1) {
 		std::cout << "Failed to find border color uniform" << std::endl;
 		return;
@@ -119,21 +119,21 @@ void Shader::SetRenderColor(glm::vec3 color) {
 	glUniform3f(colorLoc, color.x, color.y, color.z);
 }
 
-void Shader::SetAlpha(float alpha) {
+void Shader::SetAlpha(float alpha) const {
 	if (alphaLoc == -1) {
 		std::cout << "Failed to find alpha uniform" << std::endl;
 		return;
 	}
 	glUniform1f(alphaLoc, alpha);
 }
-void Shader::SetLightColor(glm::vec3 color) {
+void Shader::SetLightColor(glm::vec3 color) const {
 	if (lightColorLoc == -1) {
 		std::cout << "Failed to find light color uniform" << std::endl;
 		return;
 	}
 	glUniform3f(lightColorLoc, color.x, color.y, color.z);
 }
-void Shader::SetLightPosition(glm::vec3 position) {
+void Shader::SetLightPosition(glm::vec3 position) const {
 	if (lightPosLoc == -1) {
 		std::cout << "Failed to find light position uniform" << std::endl;
 		return;

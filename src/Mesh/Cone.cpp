@@ -8,7 +8,6 @@ Cone::Cone() : Object3D() {
 }
 
 
-VAO Cone::GetVAO() {
+VAO Cone::GetVAO() const {
 	return VertexData::GetConeVAO();
 }
-

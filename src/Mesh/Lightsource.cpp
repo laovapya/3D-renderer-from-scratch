@@ -1,6 +1,5 @@
 #include "Lightsource.h"
 #include"VertexData.h"
-
 Lightsource::Lightsource() : Object3D() {
 
 	indexCount = VertexData::GetCubeIndexCount();
@@ -9,11 +8,11 @@ Lightsource::Lightsource() : Object3D() {
 	color = glm::vec3(1.0f, 0.65f, 0.0f); //bright orange
 }
 
-VAO Lightsource::GetVAO() {
+VAO Lightsource::GetVAO() const {
 	return VertexData::GetCubeVAO(); //temporary as cube 
 }
 
 void Lightsource::Scale(glm::vec3 v) { ; }
 
-void Lightsource::Scale(float* v) { ; } //dont scale light icon 
+void Lightsource::Scale(const float* const v) { ; } //dont scale light icon 
 	

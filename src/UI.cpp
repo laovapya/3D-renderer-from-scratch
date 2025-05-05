@@ -268,7 +268,7 @@ void UI::AddItem(ListedObject& item) {
 }
 
 void UI::ReInitItems() {
-    ListedObject temp[32];
+    ListedObject temp[maxObjectCount];
     for (int i = 0, j = 0; i < maxObjectCount; ++i) {
         if (items[i].id != -1)
             temp[j++] = items[i];

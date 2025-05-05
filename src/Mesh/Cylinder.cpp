@@ -1,17 +1,12 @@
 #include "Cylinder.h"
+#include "VertexData.h"
 Cylinder::Cylinder() : Object3D() {
 
 	indexCount = VertexData::GetCylinderIndexCount();
 	objectType = cylinder;
 	isLit = true;
 }
-//int Cylinder::GetVertexCount() {
-//	return vertexCount;
-//}
 
-//void Cylinder::Bind() {
-//	VertexData::GetCylinderVAO().Bind();
-//}
-VAO Cylinder::GetVAO() {
+VAO Cylinder::GetVAO() const{
 	return VertexData::GetCylinderVAO();
 }

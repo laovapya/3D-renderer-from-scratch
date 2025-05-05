@@ -22,7 +22,7 @@ add_library(imgui STATIC
     external/imgui/backends/imgui_impl_opengl3.cpp
 )
 
-# Critical: Enable docking features
+
 target_compile_definitions(imgui PRIVATE 
     IMGUI_ENABLE_DOCKING
     IMGUI_ENABLE_VIEWPORTS
@@ -40,7 +40,7 @@ target_link_libraries(imgui PRIVATE glfw)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 add_executable(MyApp ${SOURCES})
 
-# Define shader directory for the executable target (not project)
+# Define shader directory for the executable target 
 target_compile_definitions(MyApp PRIVATE 
     SHADER_DIR="${CMAKE_SOURCE_DIR}/assets/"
 )

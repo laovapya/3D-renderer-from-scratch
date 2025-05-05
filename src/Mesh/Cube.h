@@ -3,7 +3,7 @@
 class Cube : public Object3D
 {
 public:
-
+	VAO GetVAO() const override;
 	Cube();
-	VAO GetVAO() override;
+	
 };

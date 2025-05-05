@@ -9,6 +9,6 @@ Cube::Cube() : Object3D() {
 }
 
 
-VAO Cube::GetVAO() {
+VAO Cube::GetVAO() const {
 	return VertexData::GetCubeVAO();
 }

@@ -15,7 +15,7 @@ Camera::Camera() {
 	up = glm::normalize(glm::cross(right, forward));
 }
 
-glm::mat4 Camera::GetViewMatrix() {
+glm::mat4 Camera::GetViewMatrix() const {
 	return view;
 }
 
@@ -58,14 +58,14 @@ void Camera::Orbit(glm::vec3 angle) {
     view = glm::lookAt(position, target, worldUp);
 }
 
-glm::vec3 Camera::GetRight() {
+glm::vec3 Camera::GetRight() const {
     return glm::normalize(right);
 }
 
-glm::vec3 Camera::GetUp() {
+glm::vec3 Camera::GetUp() const {
     return glm::normalize(up);
 }
 
-glm::vec3 Camera::GetForward() {
+glm::vec3 Camera::GetForward() const {
     return glm::normalize(forward);
 }

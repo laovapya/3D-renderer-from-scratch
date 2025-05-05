@@ -32,15 +32,15 @@ public:
 	Shader();
 	Shader(const char* vertexFile, const char* fragmentFile);
 
-	void Activate();
-	void Delete();
+	void Activate() const;
+	void Delete() const;
 
 	//Writing into the uniforms
-	void SetViewMatrix(glm::mat4 matrix);
-	void SetLocalMatrix(glm::mat4 matrix);
-	void SetRenderColor(glm::vec3 color);
-	void SetAlpha(float alpha);
-	void SetProjectionMatrix(glm::mat4 matrix);
-	void SetLightColor(glm::vec3);
-	void SetLightPosition(glm::vec3);
+	void SetViewMatrix(glm::mat4 matrix) const;
+	void SetLocalMatrix(glm::mat4 matrix) const;
+	void SetRenderColor(glm::vec3 color) const;
+	void SetAlpha(float alpha) const;
+	void SetProjectionMatrix(glm::mat4 matrix) const;
+	void SetLightColor(glm::vec3) const;
+	void SetLightPosition(glm::vec3) const;
 };

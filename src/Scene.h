@@ -7,18 +7,18 @@ class Scene
 {
 private:
 	//The scene is a part of window, so we need an window instance to run it.
-	Window* window;
+	const Window* window;
 	Camera* currentCamera;
 	Object3D* currentLight;
 	//object manager and camera are a part of the scene, we dont initialize these objects anywhere else. 
 	ObjectManager manager; //exists only inside scene 
 	
-	Shader* litShader; //uses normals for lighting
-	Shader* defaultShader; //only uses position 
-	//Draw scene grid. Is called each frame
+	const Shader* litShader; //uses normals for lighting
+	const Shader* defaultShader; 
+
 	void DrawGrid();
 public:
-	Scene(Window* window);
+	Scene(const Window* window);
 
 	//delete VertexData VAOs.
 	~Scene();
@@ -29,7 +29,7 @@ public:
 
 
 
-	Window* GetWindow();
+	const Window* GetWindow();
 	ObjectManager* GetObjectManager();
 
 };

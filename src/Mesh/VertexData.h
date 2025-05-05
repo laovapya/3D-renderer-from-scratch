@@ -9,15 +9,7 @@
 
 
 #include<iostream>
-//Define max value amount for different arrays
-
-//#define coneVertexCount 3 * 2 + 3 * 360 / 10 
-//#define cylinderVertexCount 3 * 2 + 2 * 3 * 360 / 10
-//
-//#define coneIndexCount (360 / 10) * 3 * 2 
-//#define cylinderIndexCount 4 * (360 / 10) * 3 
-//
-//#define max_grid_size 
+//the idea was to have a singletone class that inits all the mesh data only once 
 
 
 //VAO (vertex array object) stores vertex and index data, which is used to render 3D objects.
@@ -61,7 +53,7 @@ private:
 	void SetGridVAO();
 
 	std::vector<float> CalculateNormals(const std::vector<float>& vertices, const std::vector<int>& indices);
-	std::vector<float> CombineVerticesNormals(const std::vector<float>& vertices, const std::vector<glm::vec3>& normals, const std::vector<int>& indices);
+	//std::vector<float> CombineVerticesNormals(const std::vector<float>& vertices, const std::vector<glm::vec3>& normals, const std::vector<int>& indices);
 public:
 	
 	static float degToRad; //multiply by this value to convert angles to radians.

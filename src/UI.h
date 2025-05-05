@@ -63,7 +63,7 @@ private:
 	int objectListMenuHeight = maxObjectCount;
 
 	//methods managing the object list menu container
-	void AddFirstLightsource();
+	void AddFirstLightsource(); //remove
 
 	void AddItem(ListedObject& item);
 	void ReInitItems();

@@ -3,7 +3,7 @@
 DeltaTime::DeltaTime() {
 
 }
-float DeltaTime::GetDeltaTime() {
+float DeltaTime::GetDeltaTime(){
 	return GetInstance().deltaTime;
 }
 void DeltaTime::SetDeltaTime(float currentFrame) {

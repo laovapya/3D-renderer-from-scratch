@@ -70,22 +70,22 @@ public:
 
 
 	//Called first in the main loop
-	void EarlyUpdate();
+	void EarlyUpdate() const;
 	
 	//Called last in the main loop
-	void LateUpdate();
+	void LateUpdate() const;
 
 	
 
-	GLFWwindow* GetWindow();
-	Shader* GetDefaultShader();
-	Shader* GetLitShader();
-	bool GetShouldClose();
+	GLFWwindow* GetWindow() const;
+	const Shader* GetDefaultShader() const;
+	const Shader* GetLitShader() const;
+	bool GetShouldClose() const;
 
 	
-	float GetWidth();
-	float GetHeight();
-	float GetAspectRatio();
+	float GetWidth() const;
+	float GetHeight() const;
+	float GetAspectRatio() const;
 
 
 	//This function is called every time window's size is changed.
@@ -94,12 +94,12 @@ public:
 	void framebuffer_size_callback(int width, int height);
 
 	//ImGui's functionality to dock the sub windows of UI. 
-	void SetUpDocking();
+	void SetUpDocking() const;
 
 	//Getting sub windows dimensions
-	ImVec2 GetWidget1Dimensions();
-	ImVec2 GetWidget2Dimensions();
-	ImVec2 GetWidget3Dimensions();
+	ImVec2 GetWidget1Dimensions() const;
+	ImVec2 GetWidget2Dimensions() const;
+	ImVec2 GetWidget3Dimensions() const;
 
 
 };

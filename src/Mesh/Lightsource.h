@@ -4,10 +4,11 @@ class Lightsource : public Object3D
 {
 public:
 
-	Lightsource();
-	VAO GetVAO() override;
+	VAO GetVAO() const override;
 
 	void Scale(glm::vec3 v) override;
 
-	void Scale(float* v) override;
+	void Scale(const float* const v) override;	
+	Lightsource();
+	
 };
