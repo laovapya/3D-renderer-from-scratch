@@ -17,7 +17,8 @@ UI::UI(Scene* scene) {
 
 
 }
-void UI::AddFirstLightsource() {//temporary, this should be in scene or object manager. 
+
+void UI::AddFirstLightsource() {//temporary, this should be in scene or object manager .   
     int id = scene->GetObjectManager()->AddLightsource();
     scene->GetObjectManager()->GetCreatedObjects()[0]->Translate({6,4,-8});
     
