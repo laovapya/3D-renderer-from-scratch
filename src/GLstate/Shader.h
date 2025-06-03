@@ -10,10 +10,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include<vector>
+
 //this class manages shaders.
 //using vertex shader to transform VAO's vertices using matrices, fragment shader to change the vertex color. 
 
 class Shader {
+private:
+
 public:
 	GLuint ID;
 
@@ -25,9 +29,12 @@ public:
 	int colorLoc;
 	int alphaLoc;
 	int projectionLoc;
-	int lightColorLoc;
-	int lightPosLoc;
+	/*int lightColorLoc;
+	int lightPosLoc;*/
 
+	int lightAmountLoc;
+	int lightPositionsLoc;
+	int lightColorsLoc;
 
 	Shader();
 	Shader(const char* vertexFile, const char* fragmentFile);
@@ -41,6 +48,10 @@ public:
 	void SetRenderColor(glm::vec3 color) const;
 	void SetAlpha(float alpha) const;
 	void SetProjectionMatrix(glm::mat4 matrix) const;
-	void SetLightColor(glm::vec3) const;
-	void SetLightPosition(glm::vec3) const;
+
+
+	void SetLightAmount(int amount) const;
+	void SetLightColors(const std::vector<glm::vec3>& colors) const;
+	void SetLightPositions(const std::vector<glm::vec3>& positions) const;
+	void SetLightUniforms(int amount, const std::vector<glm::vec3>& colors, const std::vector<glm::vec3>& positions) const;
 };

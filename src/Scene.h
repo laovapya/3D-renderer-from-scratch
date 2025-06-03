@@ -10,8 +10,9 @@ private:
 	const Window* window;
 	Camera* currentCamera;
 	Object3D* currentLight;
-	//object manager and camera are a part of the scene, we dont initialize these objects anywhere else. 
-	ObjectManager manager; //exists only inside scene 
+
+	//object manager and camera are a part of the scene, dont initialize these objects anywhere else. 
+	ObjectManager manager; 
 	
 	const Shader* litShader; //uses normals for lighting
 	const Shader* defaultShader; 
@@ -29,7 +30,7 @@ public:
 
 
 
-	const Window* GetWindow();
+	//const Window* GetWindow() const;
 	ObjectManager* GetObjectManager();
 
 };

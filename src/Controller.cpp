@@ -65,7 +65,7 @@ bool Controller::GetTranslating() {
     return GetInstance().isTranslating;
 }
 
-glm::vec3 Controller::GetTransformVector(Camera* currentCamera) {
+glm::vec3 Controller::GetTransformVector(const Camera* currentCamera) {
     glm::vec3 v(0, 0, 0);
     Controller& instance = Controller::GetInstance();
 
@@ -79,7 +79,7 @@ glm::vec3 Controller::GetTransformVector(Camera* currentCamera) {
     if (instance.isZaxisEnabled)
         v += mouseVector.z * glm::vec3(0, 0, 1);
 
-    return v * -1.0f * instance.panSpeed;
+    return v * -1.0f * instance.mouseSpeed;
 }
 
 void Controller::MoveCamera(GLFWwindow* window, Camera* currentCamera) {

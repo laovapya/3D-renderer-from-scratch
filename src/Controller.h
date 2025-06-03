@@ -6,9 +6,9 @@
 class Controller
 {
 private:
-	//this value controls object transformation and panning speed.
+
 	float mouseSpeed = 30;
-	float zoomSpeed = 3;
+	float zoomSpeed = 1;
 
 
 	//values to get mouse delta.
@@ -41,7 +41,7 @@ public:
 	//static void SetActiveColor(glm::vec4 color);
 	
 	//vector determining the transformation amount and its axises. Depends on mouse movement.
-	static glm::vec3 GetTransformVector(Camera* currentCamera);
+	static glm::vec3 GetTransformVector(const Camera* currentCamera);
 
 
 	

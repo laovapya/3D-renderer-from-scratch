@@ -4,7 +4,7 @@
 class Cylinder : public Object3D
 {
 public:
-	VAO GetVAO() const override;
-	Cylinder();
+	VAO GenerateVAO(int& indexCount, int segmentCount = 10) const override;
+	Cylinder(int segmentCount);
 	
 };

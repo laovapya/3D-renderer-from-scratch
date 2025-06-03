@@ -1,7 +1,7 @@
 #include "Window.h"
 
 #include"Camera.h"
-
+#include"imgui_internal.h"
 
 
 Window::Window() {
@@ -17,12 +17,15 @@ Window::Window() {
 	//std::cout<<"InitGlad";
 	SetWindowParameters();
 	//std::cout<<"SetWindowParameters";
+	InitFBO(width, height);
+
 	InitShaders();
 	//std::cout<<"InitShaders";
 	RegisterEvents();
 	//std::cout<<"RegisterEvents";
 	InitImGui();
 	//std::cout<<"InitImGui";
+
 }
 
 Window::~Window() {
@@ -41,13 +44,10 @@ void Window::InitDimensions()
 	width = 2000;
 	height = 1200;
 
-	yDownOffset = 200;
-	XRightOffset = 500;
 
-	lowerLeft = glm::vec2(0, yDownOffset);
-	upperRight = glm::vec2(width - XRightOffset, height);
+
 	
-	aspectRatio = (upperRight.x - lowerLeft.x) / (upperRight.y);
+	aspectRatio = width * sceneXpercent / (height * sceneYpercent);
 }
 
 void Window::InitGLFW() {
@@ -78,7 +78,7 @@ void Window::InitGlad() {
 }
 
 void Window::SetWindowParameters() {
-	glViewport(lowerLeft.x, lowerLeft.y, upperRight.x, upperRight.y);
+	glViewport(0, 0, width, height);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //enable alpha values;
@@ -87,6 +87,41 @@ void Window::SetWindowParameters() {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe
 	glPolygonMode(GL_FILL, GL_FILL); //fill
 	glClearColor(color.x, color.y, color.z, color.w);
+}
+
+void Window::InitFBO(int width, int height) {
+	glGenFramebuffers(1, &fbo);
+	ResizeFBO(width, height);
+}
+
+void Window::ResizeFBO(int width, int height) {
+	if (colorTexture) {
+		glDeleteTextures(1, &colorTexture);
+		colorTexture = 0;
+	}
+	if (rbo) {
+		glDeleteRenderbuffers(1, &rbo);
+		rbo = 0;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	glGenTextures(1, &colorTexture);
+	glBindTexture(GL_TEXTURE_2D, colorTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer is not complete" << std::endl;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 void Window::RegisterEvents() {
 	
@@ -104,8 +139,9 @@ void Window::InitShaders() {
     litShader.SetProjectionMatrix(projection);
 	litShader.SetViewMatrix(glm::mat4(1.0f));
 	litShader.SetLocalMatrix(glm::mat4(1.0f));
-    litShader.SetLightColor(glm::vec3(1.0f, 1.0f, 1.0f)); //white init
-	litShader.SetLightPosition(glm::vec3(0, 0, 0));
+ //   litShader.SetLightColor(glm::vec3(1.0f, 1.0f, 1.0f)); //white init
+	//litShader.SetLightPosition(glm::vec3(0, 0, 0));
+	
 	litShader.SetAlpha(1.0f);
 	litShader.SetRenderColor(glm::vec3(1.0f, 0.4f, 0.8f)); //pink init
 
@@ -138,15 +174,16 @@ void Window::InitImGui() {
 	ImGuiStyle& style = ImGui::GetStyle();
 	style.Colors[ImGuiCol_WindowBg] = color;
 	style.Colors[ImGuiCol_MenuBarBg] = color;
+
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 void Window::framebuffer_size_callback(int width, int height) //by instance 
 {
-	upperRight = glm::vec2(width - XRightOffset, height);
-	aspectRatio = ((upperRight.x - lowerLeft.x)) / ((upperRight.y));
-	glViewport(lowerLeft.x, lowerLeft.y, upperRight.x, upperRight.y);
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), Window::GetAspectRatio(), 0.1f, 100.0f);
+	ResizeFBO(width, height);
+	aspectRatio = width * sceneXpercent / (height * sceneYpercent);
+	glViewport(0, 0, width, height);
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
 	litShader.Activate();
 	litShader.SetProjectionMatrix(projection);
 	defaultShader.Activate();
@@ -164,15 +201,19 @@ void Window::framebuffer_size_callback(GLFWwindow* win, int width, int height)  
 
 
 void Window::EarlyUpdate() const {
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	SetUpDocking(); //------------------------------------------------------------------------------------------------------------------------
+	SetUpDocking();
 }
-
 void Window::LateUpdate() const {
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); //before swapping buffers
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
@@ -184,6 +225,7 @@ void Window::LateUpdate() const {
 
 
 
+	
 
 	glfwSwapBuffers(window);
 	Controller::ResetMouse(); //before polling events
@@ -222,9 +264,7 @@ float Window::GetAspectRatio() const {
 void Window::SetUpDocking() const
 {
 
-    //static bool opt_fullscreen = true;
-    //static bool opt_padding = false;
-    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_AutoHideTabBar ;//| ImGuiDockNodeFlags_NoResize ;//| ImGuiDockNodeFlags_NoUndocking;
+	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_NoUndocking; //ImGuiDockNodeFlags_AutoHideTabBar;
 
   
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -235,7 +275,7 @@ void Window::SetUpDocking() const
 	ImGui::SetNextWindowViewport(viewport->ID);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-	window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+	window_flags |= ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize; //ImGuiWindowFlags_NoTitleBar 
 	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;   
 
 
@@ -244,7 +284,9 @@ void Window::SetUpDocking() const
 
 	bool a = true;
     //if (!opt_padding)
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+
     ImGui::Begin("DockSpace Demo", &a, window_flags);
     //if (!opt_padding)
         ImGui::PopStyleVar();
@@ -252,60 +294,56 @@ void Window::SetUpDocking() const
     //if (opt_fullscreen)
         ImGui::PopStyleVar(2);
 
+
+	ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
     // Submit the DockSpace
     ImGuiIO& io = ImGui::GetIO();
 
-    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-    {
-        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-    }
+	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+	{
+		if (!hasSetupDocking) {
+			hasSetupDocking = true;
 
+			ImGui::DockBuilderRemoveNode(dockspace_id); // clear previous
+			ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags);
+			ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetMainViewport()->Size);
 
-    //if (ImGui::BeginMenuBar())
-    //{
-    //    if (ImGui::BeginMenu("Options"))
-    //    {
+			// split main dockspace into left (70%) and right (30%)
+			ImGuiID dock_left, dock_right;
+			ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 1 - sceneXpercent, &dock_right, &dock_left);
 
-    //        //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-    //        //ImGui::MenuItem("Padding", NULL, &opt_padding);
-    //        ImGui::Separator();
+			// split left vertically into top (scene) and bottom (component menu)
+			ImGuiID dock_left_top, dock_left_bottom;
+			ImGui::DockBuilderSplitNode(dock_left, ImGuiDir_Down, 1 - sceneYpercent, &dock_left_bottom, &dock_left_top);
 
-    //        if (ImGui::MenuItem("Flag: NoDockingOverCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingOverCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingOverCentralNode; }
-    //        if (ImGui::MenuItem("Flag: NoDockingSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingSplit; }
-    //        if (ImGui::MenuItem("Flag: NoUndocking", "", (dockspace_flags & ImGuiDockNodeFlags_NoUndocking) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoUndocking; }
-    //        if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-    //        if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-    //        if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, true)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-    //        ImGui::Separator();
-			
-			
+			// split right vertically into three equal parts
+			ImGuiID dock_right_top, dock_right_middle, dock_right_bottom;
+			ImGui::DockBuilderSplitNode(dock_right, ImGuiDir_Down, 1.0f / 5, &dock_right_top, &dock_right_middle);
+			ImGui::DockBuilderSplitNode(dock_right_middle, ImGuiDir_Down, 0.4f, &dock_right_middle, &dock_right_bottom);
 
-    //        /*if (ImGui::MenuItem("Close", NULL, false, p_open != NULL))
-    //            *p_open = false;*/
-    //        ImGui::EndMenu();
-    //    }
+			// dock windows
+			ImGui::DockBuilderDockWindow("Scene", dock_left_top);
+			ImGui::DockBuilderDockWindow("Component menu", dock_left_bottom);
 
-    //    ImGui::EndMenuBar();
-    //}
+			ImGui::DockBuilderDockWindow("Object list", dock_right_top);
+			ImGui::DockBuilderDockWindow("Transform menu", dock_right_middle);
+			ImGui::DockBuilderDockWindow("Coloring", dock_right_bottom);
+
+			ImGui::DockBuilderFinish(dockspace_id);
+
+		}
+		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+	}
+
+	
 
     ImGui::End();
 }
 
 
-ImVec2 Window::GetWidget1Dimensions() const {
-	return ImVec2(width - XRightOffset, yDownOffset);
+
+GLuint Window::GetColorTexture() const {
+	return colorTexture;
 }
-ImVec2 Window::GetWidget2Dimensions() const {
-	return ImVec2(XRightOffset, height * 0.4f);
-}
-ImVec2 Window::GetWidget3Dimensions() const {
-	return ImVec2(XRightOffset, height * 0.6f);
-}
-
-//get widget4 dimensions... 
-
-
-
 
 //Shader Window::shapeShaderProgram = Shader();

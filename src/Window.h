@@ -18,16 +18,16 @@
 class Window 
 {
 private:
-	//Window's width, height and aspect ratio.
+	//Window's width, height 
 	float width;
 	float height;
+
+	//aspect ratio of the scene subwindow
 	float aspectRatio;
 
-	//values determining the position of viewport and UI elements
-	glm::vec2 lowerLeft;
-	glm::vec2 upperRight;
-	float yDownOffset;
-	float XRightOffset;
+	float sceneXpercent = 0.7f;
+	float sceneYpercent = 0.8f;
+
 
 	//window background color
 	glm::vec4 color = glm::vec4(0.4f, 0.4f, 0.4f, 1); //grey 
@@ -38,6 +38,13 @@ private:
 	Shader defaultShader;
 
 	GLFWwindow* window;
+
+	mutable bool hasSetupDocking = false;
+
+
+	GLuint fbo;
+	GLuint rbo;
+	GLuint colorTexture;
 
 	void InitDimensions();
 
@@ -71,11 +78,12 @@ public:
 
 	//Called first in the main loop
 	void EarlyUpdate() const;
-	
+	void ImGuiEarlyUpdate() const;
 	//Called last in the main loop
 	void LateUpdate() const;
 
-	
+	void InitFBO(int width, int height);
+	void ResizeFBO(int width, int height);
 
 	GLFWwindow* GetWindow() const;
 	const Shader* GetDefaultShader() const;
@@ -96,12 +104,9 @@ public:
 	//ImGui's functionality to dock the sub windows of UI. 
 	void SetUpDocking() const;
 
-	//Getting sub windows dimensions
-	ImVec2 GetWidget1Dimensions() const;
-	ImVec2 GetWidget2Dimensions() const;
-	ImVec2 GetWidget3Dimensions() const;
 
 
+	GLuint GetColorTexture() const;
 };
 
 

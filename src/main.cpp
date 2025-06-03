@@ -18,27 +18,29 @@ int main()
 	DisplayKeys(); 
 
     Window window;
-    ObjectManager manager;
     Scene scene(&window);
-    UI ui(&scene);
+    UI ui(&window, scene.GetObjectManager());
     
 
 
     while (true) { //main loop
         DeltaTime::SetDeltaTime(glfwGetTime());
         window.EarlyUpdate();
+        scene.Update();
+       
 
-
+        ui.DrawScene();
         ui.DrawObjectList();
-        ui.DrawObjectMenu();
+        ui.DrawComponentMenu();
         ui.DrawTransformMenu();
         ui.DrawColoringMenu();
 
-        scene.Update();
+        
         window.LateUpdate();
+       
 
         if (window.GetShouldClose()) {
-            std::cout<<"should close"<<std::endl;
+            //std::cout<<"should close"<<std::endl;
             break;
         }
             

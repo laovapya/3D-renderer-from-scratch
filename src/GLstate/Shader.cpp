@@ -21,10 +21,9 @@ std::string get_file_contents(const char* filename)
 Shader::Shader() {
 	ID = -1;
 }
-// Constructor that build the Shader Program from 2 different shaders
+
 Shader::Shader(const char* vertexFile, const char* fragmentFile)
 {
-
 	// Read vertexFile and fragmentFile and store the strings
 	std::string vertexCode = get_file_contents(vertexFile);
 	std::string fragmentCode = get_file_contents(fragmentFile);
@@ -70,10 +69,14 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
 	
 	projectionLoc = glGetUniformLocation(ID, "projection");
 	
-	lightColorLoc = glGetUniformLocation(ID, "lightColor");
+	/*lightColorLoc = glGetUniformLocation(ID, "lightColor");
 	
 	lightPosLoc = glGetUniformLocation(ID, "lightPosition");
-	
+	*/
+
+	lightAmountLoc = glGetUniformLocation(ID, "lightAmount");
+	lightPositionsLoc = glGetUniformLocation(ID, "lightPositions");
+	lightColorsLoc = glGetUniformLocation(ID, "lightColors");
 
 }
 
@@ -126,17 +129,47 @@ void Shader::SetAlpha(float alpha) const {
 	}
 	glUniform1f(alphaLoc, alpha);
 }
-void Shader::SetLightColor(glm::vec3 color) const {
-	if (lightColorLoc == -1) {
-		std::cout << "Failed to find light color uniform" << std::endl;
+
+
+void Shader::SetLightAmount(int amount) const {
+	if (lightAmountLoc == -1) {
+		std::cout << "Failed to find light amount uniform" << std::endl;
 		return;
 	}
-	glUniform3f(lightColorLoc, color.x, color.y, color.z);
+	glUniform1i(lightAmountLoc, amount);
 }
-void Shader::SetLightPosition(glm::vec3 position) const {
-	if (lightPosLoc == -1) {
-		std::cout << "Failed to find light position uniform" << std::endl;
+
+void Shader::SetLightPositions(const std::vector<glm::vec3>& positions) const {
+	
+	if (lightPositionsLoc == -1) {
+		std::cout << "Failed to find lightPositions uniform" << std::endl;
 		return;
 	}
-	glUniform3f(lightPosLoc, position.x, position.y, position.z);
+	for (int i = 0; i < positions.size(); ++i) {
+		std::string name = "lightPositions[" + std::to_string(i) + "]";
+		GLint loc = glGetUniformLocation(ID, name.c_str());
+		if (loc != -1)
+			glUniform3fv(loc, 1, glm::value_ptr(positions[i]));
+	}
+	SetLightAmount(positions.size());
+}
+
+void Shader::SetLightColors(const std::vector<glm::vec3>& colors) const {
+
+	if (lightColorsLoc == -1) {
+		std::cout << "Failed to find lightColors uniform" << std::endl;
+		return;
+	}
+	for (int i = 0; i < colors.size(); ++i) {
+		std::string name = "lightColors[" + std::to_string(i) + "]";
+		GLint loc = glGetUniformLocation(ID, name.c_str());
+		if (loc != -1)
+			glUniform3fv(loc, 1, glm::value_ptr(colors[i]));
+	}
+	SetLightAmount(colors.size());
+}
+void Shader::SetLightUniforms(int amount, const std::vector<glm::vec3>& colors, const std::vector<glm::vec3>& positions) const {
+	SetLightAmount(amount);
+	SetLightColors(colors);
+	SetLightPositions(positions);
 }

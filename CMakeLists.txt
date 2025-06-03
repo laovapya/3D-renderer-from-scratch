@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.15)
 project(3D_Renderer)
 
-# === 1. Enforce vcpkg ===
+# Enforce vcpkg 
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     message(FATAL_ERROR "Use: cmake -B build -DCMAKE_TOOLCHAIN_FILE=[vcpkg]/scripts/buildsystems/vcpkg.cmake")
 endif()
 
-# === 2. Find packages ===
+# Find packages 
 find_package(glfw3 REQUIRED CONFIG)
 find_package(glad REQUIRED)
 find_package(glm REQUIRED)
 
-# === 3. Setup ImGui (Docking Branch) ===
+# Setup ImGui (Docking Branch)
 add_library(imgui STATIC
     external/imgui/imgui.cpp
     external/imgui/imgui_demo.cpp
@@ -36,11 +36,11 @@ target_include_directories(imgui PUBLIC
 
 target_link_libraries(imgui PRIVATE glfw)
 
-# === 4. Main executable ===
+# Main executable 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 add_executable(MyApp ${SOURCES})
 
-# Define shader directory for the executable target 
+# Define shader directory 
 target_compile_definitions(MyApp PRIVATE 
     SHADER_DIR="${CMAKE_SOURCE_DIR}/assets/"
 )

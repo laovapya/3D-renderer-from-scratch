@@ -9,13 +9,12 @@ Scene::Scene(const Window* window) {
 
 	litShader = window->GetLitShader();
 	defaultShader = window->GetDefaultShader();
+
+	window->GetLitShader()->Activate();
+	litShader->SetLightColors(manager.GetLightsourceColors());
 }
 
 Scene::~Scene() {
-	VertexData::GetConeVAO().Delete();
-	VertexData::GetCubeVAO().Delete();
-	VertexData::GetCylinderVAO().Delete();
-	VertexData::GetSphereVAO().Delete();
 	VertexData::GetGridVAO().Delete();
 	VertexData::GetXaxisVAO().Delete();
 	VertexData::GetZaxisVAO().Delete();
@@ -51,7 +50,7 @@ void Scene::Update() { //goes into main loop
 	for (Object3D* object : manager.GetCreatedObjects()) {
 		object->GetVAO().Bind();
 
-		if (object->isSelected) {
+		if (object->GetIfSelected()) {
 			//transformations
 			if (Controller::GetTranslating())
 				object->Translate(v * DeltaTime::GetDeltaTime());
@@ -65,14 +64,15 @@ void Scene::Update() { //goes into main loop
 		
 		const Shader* shader = object->GetIfLit() ? litShader : defaultShader;
 		shader->Activate();
-		litShader->SetLightPosition(manager.GetCreatedObjects()[0]->GetPosition()); //temporary solution to move light source 
+		litShader->SetLightPositions(manager.GetLightsourcePositions()); 
+		
 		shader->SetViewMatrix(currentCamera->GetViewMatrix()); // projection * view * local * vector; 
 		shader->SetLocalMatrix(object->GetObjectMatrix());
 		shader->SetRenderColor(object->GetColor());
 
 		glDrawElements(GL_TRIANGLES, object->GetIndexCount(), GL_UNSIGNED_INT, 0);
 
-		if (object->isSelected) {
+		if (object->GetIfSelected()) {
 			//draw outline (after filled object is drawn) 
 			defaultShader->Activate();
 			defaultShader->SetViewMatrix(currentCamera->GetViewMatrix()); // projection * view * local * vector; 
@@ -82,16 +82,13 @@ void Scene::Update() { //goes into main loop
 		}
 	}
 
-	
-
 	DrawGrid();
-
 }
 
-const Window* Scene::GetWindow() {
-	return window;
-}
+//const Window* Scene::GetWindow() const{
+//	return window;
+//}
 
-ObjectManager* Scene::GetObjectManager() {
+ObjectManager* Scene::GetObjectManager(){
 	return &manager;
 }

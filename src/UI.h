@@ -15,7 +15,7 @@ class UI
 //The object list menu is created using a list of items of this struct. 
 //id links the object in the scene to object in the list
 private:
-	struct ListedObject {
+	/*struct ListedObject {
 
 	public:
 		bool isSelected;
@@ -34,51 +34,47 @@ private:
 			this->name = name;
 			this->shape = shape;
 		}
-	};
+	};*/
 
 
-	Scene* scene;
+	const Window* window;
+	ObjectManager* objectManager;
+
+
 
 	//The object list menu container
-	ListedObject items[maxObjectCount];
+	//ListedObject items[maxObjectCount];
 
 
-	int currentCount = 0;
-
-	//current count of shapes (used to create names in the object menu list)
-	int cubeCount = 0;
-	int coneCount = 0;
-	int cylinderCount = 0;
-	int sphereCount = 0;
-
-	int lightsourceCount = 0;
-	int cameraCount = 0;
+	
 
 	//These buffers store values from the sliders of transform menu 
+	int segmentsBuffer[1] = { 12 };
 	float positionBuffer[3] = { 0, 0, 0 };
 	float rotationBuffer[3] = { 0, 0, 0 };
 	float scaleBuffer[3] = { 0, 0, 0 };
 	float colorBuffer[4] = { 0, 0, 0, 0 };
 	
-	int objectListMenuHeight = maxObjectCount;
+	int objectListMenuHeight = maxObjectCount / 4;
 
-	//methods managing the object list menu container
-	void AddFirstLightsource(); //remove
 
-	void AddItem(ListedObject& item);
-	void ReInitItems();
-	void DeleteItems();
+	//void AddItem(ListedObject& item);
+	//void ReInitItems();
+	//void DeleteItems();
 public:
-	UI(Scene* scene);
+	UI(const Window* window, ObjectManager* objectManager);
 
 	//methods to draw the UI windows
-	void DrawObjectMenu();
+	void DrawScene();
+	void DrawComponentMenu();
 	
 	void DrawObjectList();
 
 	void DrawTransformMenu();
 
 	void DrawColoringMenu();
+
+	int GetSegmentCount() const;
 };
 
 

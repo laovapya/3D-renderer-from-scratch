@@ -7,7 +7,7 @@ class Sphere : public Object3D
 {
 
 public:
-	VAO GetVAO() const override;
-	Sphere();
+	VAO GenerateVAO(int& indexCount, int segmentCount = 12) const override;
+	Sphere(int segmentCount);
 	
 };
