@@ -11,7 +11,7 @@ c++ compiler
 
 Installation:
 
-git clone -b dev --recurse-submodules https://github.com/laovapya/3D-renderer-from-scratch.git
+git clone -b main --recurse-submodules https://github.com/laovapya/3D-renderer-from-scratch.git
 
 cd 3D-renderer-from-scratch
 
