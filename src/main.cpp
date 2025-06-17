@@ -23,7 +23,7 @@ int main()
     
 
 
-    while (true) { //main loop
+    while (true) { 
         DeltaTime::SetDeltaTime(glfwGetTime());
         window.EarlyUpdate();
         scene.Update();
@@ -39,13 +39,10 @@ int main()
         window.LateUpdate();
        
 
-        if (window.GetShouldClose()) {
-            //std::cout<<"should close"<<std::endl;
+        if (window.GetShouldClose()) 
             break;
-        }
-            
+ 
     }
-    //std::cin.ignore();
     return 0;
 }
 

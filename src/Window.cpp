@@ -6,31 +6,30 @@
 
 Window::Window() {
 
-	//order matters 
+
 	InitDimensions();
-	//std::cout<<"InitDimensions";
+
 	InitGLFW();
-	//std::cout<<"InitGLFW";
+
 	CreateWindow();
-	//std::cout<<"CreateWindow";
+
 	InitGlad();
-	//std::cout<<"InitGlad";
+
 	SetWindowParameters();
-	//std::cout<<"SetWindowParameters";
+
 	InitFBO(width, height);
 
 	InitShaders();
-	//std::cout<<"InitShaders";
+
 	RegisterEvents();
-	//std::cout<<"RegisterEvents";
+
 	InitImGui();
-	//std::cout<<"InitImGui";
+
 
 }
 
 Window::~Window() {
 	litShader.Delete();
-	//lightsourceShaderProgram.Delete();
 	glfwTerminate();
 
 	ImGui_ImplOpenGL3_Shutdown();
@@ -44,9 +43,6 @@ void Window::InitDimensions()
 	width = 2000;
 	height = 1200;
 
-
-
-	
 	aspectRatio = width * sceneXpercent / (height * sceneYpercent);
 }
 
@@ -57,7 +53,7 @@ void Window::InitGLFW() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 void Window::CreateWindow() {
-	window = glfwCreateWindow(width, height, appName, NULL, NULL);
+	window = glfwCreateWindow(width, height, "3D_Renderer", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -66,8 +62,6 @@ void Window::CreateWindow() {
 	}
 	glfwSetWindowUserPointer(window, this); //use the pointer to switch from static glfw to instances
 	glfwMakeContextCurrent(window);
-	//return bool?
-	
 }
 void Window::InitGlad() {
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -84,8 +78,7 @@ void Window::SetWindowParameters() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //enable alpha values;
 
 	glEnable(GL_DEPTH_TEST); //to prevent rendering back vertices
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe
-	glPolygonMode(GL_FILL, GL_FILL); //fill
+	glPolygonMode(GL_FILL, GL_FILL); 
 	glClearColor(color.x, color.y, color.z, color.w);
 }
 
@@ -139,8 +132,6 @@ void Window::InitShaders() {
     litShader.SetProjectionMatrix(projection);
 	litShader.SetViewMatrix(glm::mat4(1.0f));
 	litShader.SetLocalMatrix(glm::mat4(1.0f));
- //   litShader.SetLightColor(glm::vec3(1.0f, 1.0f, 1.0f)); //white init
-	//litShader.SetLightPosition(glm::vec3(0, 0, 0));
 	
 	litShader.SetAlpha(1.0f);
 	litShader.SetRenderColor(glm::vec3(1.0f, 0.4f, 0.8f)); //pink init
@@ -162,9 +153,7 @@ void Window::InitImGui() {
 	
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	//io.ConfigViewportsNoAutoMerge = true;
-	//io.ConfigViewportsNoTaskBarIcon = true;
+
 	
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330"); 
@@ -194,7 +183,6 @@ void Window::framebuffer_size_callback(int width, int height) //by instance
 void Window::framebuffer_size_callback(GLFWwindow* win, int width, int height)  //static
 {
 	Window* self = static_cast<Window*>(glfwGetWindowUserPointer(win));
-	//Window* self = (Window*)glfwGetWindowUserPointer(win);
 	if (self != nullptr) 
 		self->framebuffer_size_callback(width, height);
 }
@@ -263,8 +251,8 @@ float Window::GetAspectRatio() const {
 
 void Window::SetUpDocking() const
 {
-
-	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_NoUndocking; //ImGuiDockNodeFlags_AutoHideTabBar;
+	static bool hasSetupDocking = false;
+	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_NoUndocking;
 
   
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -275,28 +263,25 @@ void Window::SetUpDocking() const
 	ImGui::SetNextWindowViewport(viewport->ID);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-	window_flags |= ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize; //ImGuiWindowFlags_NoTitleBar 
-	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;   
+	window_flags |= ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar;
+	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus ;   
 
 
     if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
         window_flags |= ImGuiWindowFlags_NoBackground;
 
-	bool a = true;
-    //if (!opt_padding)
+
+
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-
+	bool a = true;
     ImGui::Begin("DockSpace Demo", &a, window_flags);
-    //if (!opt_padding)
-        ImGui::PopStyleVar();
-
-    //if (opt_fullscreen)
-        ImGui::PopStyleVar(2);
+ 
+    ImGui::PopStyleVar();
+    ImGui::PopStyleVar(2);
 
 
 	ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-    // Submit the DockSpace
     ImGuiIO& io = ImGui::GetIO();
 
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
@@ -316,7 +301,7 @@ void Window::SetUpDocking() const
 			ImGuiID dock_left_top, dock_left_bottom;
 			ImGui::DockBuilderSplitNode(dock_left, ImGuiDir_Down, 1 - sceneYpercent, &dock_left_bottom, &dock_left_top);
 
-			// split right vertically into three equal parts
+			// split right vertically into three parts
 			ImGuiID dock_right_top, dock_right_middle, dock_right_bottom;
 			ImGui::DockBuilderSplitNode(dock_right, ImGuiDir_Down, 1.0f / 5, &dock_right_top, &dock_right_middle);
 			ImGui::DockBuilderSplitNode(dock_right_middle, ImGuiDir_Down, 0.4f, &dock_right_middle, &dock_right_bottom);
@@ -346,4 +331,3 @@ GLuint Window::GetColorTexture() const {
 	return colorTexture;
 }
 
-//Shader Window::shapeShaderProgram = Shader();

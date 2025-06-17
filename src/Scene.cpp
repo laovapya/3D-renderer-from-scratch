@@ -5,7 +5,7 @@
 
 Scene::Scene(const Window* window) {
 	this->window = window;
-	currentCamera = new Camera(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	currentCamera = new Camera(); 
 
 	litShader = window->GetLitShader();
 	defaultShader = window->GetDefaultShader();
@@ -42,12 +42,11 @@ void Scene::DrawGrid() {
 	glDrawArrays(GL_LINES, 0, VertexData::GetGridIndexCount());
 }
 
-//events that happen on button press should be moved away from here 
 void Scene::Update() { //goes into main loop
 	Controller::MoveCamera(window->GetWindow(), currentCamera);
 	
 	glm::vec3 v = Controller::GetTransformVector(currentCamera);
-	for (Object3D* object : manager.GetCreatedObjects()) {
+	for (const auto& object : manager.GetCreatedObjects()) {
 		object->GetVAO().Bind();
 
 		if (object->GetIfSelected()) {
@@ -58,7 +57,7 @@ void Scene::Update() { //goes into main loop
 				object->Scale(v * DeltaTime::GetDeltaTime());
 			if (Controller::GetRotating())
 				object->Rotate(v * DeltaTime::GetDeltaTime());
-			//---------------
+	
 			
 		}
 		
@@ -66,16 +65,16 @@ void Scene::Update() { //goes into main loop
 		shader->Activate();
 		litShader->SetLightPositions(manager.GetLightsourcePositions()); 
 		
-		shader->SetViewMatrix(currentCamera->GetViewMatrix()); // projection * view * local * vector; 
+		shader->SetViewMatrix(currentCamera->GetViewMatrix()); 
 		shader->SetLocalMatrix(object->GetObjectMatrix());
 		shader->SetRenderColor(object->GetColor());
 
 		glDrawElements(GL_TRIANGLES, object->GetIndexCount(), GL_UNSIGNED_INT, 0);
 
 		if (object->GetIfSelected()) {
-			//draw outline (after filled object is drawn) 
+
 			defaultShader->Activate();
-			defaultShader->SetViewMatrix(currentCamera->GetViewMatrix()); // projection * view * local * vector; 
+			defaultShader->SetViewMatrix(currentCamera->GetViewMatrix());
 			defaultShader->SetLocalMatrix(object->GetObjectMatrix());
 			defaultShader->SetRenderColor(Object3D::selectColor);
 			glDrawElements(GL_LINES, object->GetIndexCount(), GL_UNSIGNED_INT, 0);
@@ -85,9 +84,6 @@ void Scene::Update() { //goes into main loop
 	DrawGrid();
 }
 
-//const Window* Scene::GetWindow() const{
-//	return window;
-//}
 
 ObjectManager* Scene::GetObjectManager(){
 	return &manager;

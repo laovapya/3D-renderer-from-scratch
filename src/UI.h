@@ -3,7 +3,6 @@
 
 #include"iostream"
 
-#define maxObjectCount 32
 
 
 
@@ -15,36 +14,8 @@ class UI
 //The object list menu is created using a list of items of this struct. 
 //id links the object in the scene to object in the list
 private:
-	/*struct ListedObject {
-
-	public:
-		bool isSelected;
-		int id;
-		std::string name;
-		Object3D::type shape;
-		ListedObject() {
-			isSelected = false;
-			id = -1;
-			name = "null";
-			shape = Object3D::type::cube;
-		}
-		ListedObject(bool isSelected, int ID, std::string name, Object3D::type shape) {
-			this->isSelected = isSelected;
-			this->id = ID;
-			this->name = name;
-			this->shape = shape;
-		}
-	};*/
-
-
 	const Window* window;
 	ObjectManager* objectManager;
-
-
-
-	//The object list menu container
-	//ListedObject items[maxObjectCount];
-
 
 	
 
@@ -55,12 +26,9 @@ private:
 	float scaleBuffer[3] = { 0, 0, 0 };
 	float colorBuffer[4] = { 0, 0, 0, 0 };
 	
+	int maxObjectCount = 256;
 	int objectListMenuHeight = maxObjectCount / 4;
 
-
-	//void AddItem(ListedObject& item);
-	//void ReInitItems();
-	//void DeleteItems();
 public:
 	UI(const Window* window, ObjectManager* objectManager);
 

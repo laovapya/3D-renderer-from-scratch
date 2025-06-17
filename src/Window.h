@@ -1,7 +1,7 @@
 #pragma once
 #include"imgui.h"
 #include"imgui_impl_glfw.h"
-#include"imgui_impl_opengl3.h" //before glad
+#include"imgui_impl_opengl3.h" 
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -11,8 +11,7 @@
 #include"Controller.h"
 
 
-//defining application name
-#define appName "3D_Renderer"
+
 
 //This class intializes the window and fires all related events.
 class Window 
@@ -39,7 +38,6 @@ private:
 
 	GLFWwindow* window;
 
-	mutable bool hasSetupDocking = false;
 
 
 	GLuint fbo;

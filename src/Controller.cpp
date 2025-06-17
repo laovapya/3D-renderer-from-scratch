@@ -1,10 +1,8 @@
 #include "Controller.h"
 #include"DeltaTime.h"
 
-#include<iostream>> //remove
-Controller::Controller() {
 
-}
+Controller::Controller() { ; }
 
 void Controller::SwitchState(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
@@ -42,7 +40,7 @@ void Controller::SwitchState(GLFWwindow* window, int key, int scancode, int acti
 void Controller::MouseCallback(GLFWwindow* window, double xpos, double ypos) {
     Controller& instance = Controller::GetInstance();
     instance.mouseXoffset = xpos - instance.mouseLastX;
-    instance.mouseYoffset = instance.mouseLastY - ypos; // reversed since y-coordinates range from bottom to top
+    instance.mouseYoffset = instance.mouseLastY - ypos; 
     instance.mouseLastX = xpos;
     instance.mouseLastY = ypos;
 
@@ -89,10 +87,10 @@ void Controller::MoveCamera(GLFWwindow* window, Camera* currentCamera) {
         currentCamera->Pan(glm::vec3(instance.mouseXoffset, instance.mouseYoffset, 0) * DeltaTime::GetDeltaTime());
     }
     if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS) {
-        currentCamera->Pan(glm::vec3(0, 0, 1) * instance.panSpeed * DeltaTime::GetDeltaTime());
+        currentCamera->Pan(glm::vec3(0, 0, 1) * instance.zoomSpeed * DeltaTime::GetDeltaTime());
     }
     if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS) {
-        currentCamera->Pan(glm::vec3(0, 0, -1) * instance.panSpeed * DeltaTime::GetDeltaTime());
+        currentCamera->Pan(glm::vec3(0, 0, -1) * instance.zoomSpeed * DeltaTime::GetDeltaTime());
     }
     if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
         currentCamera->Orbit(-glm::vec3(instance.mouseYoffset, instance.mouseXoffset, 0) * DeltaTime::GetDeltaTime());
@@ -107,7 +105,5 @@ void Controller::ResetMouse() {
     instance.mouseYoffset = 0;
 }
 
-// float* Controller::GetActiveColor(){
-//     return activeColor;
-// }
+
 

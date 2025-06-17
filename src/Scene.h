@@ -28,9 +28,6 @@ public:
 	void Update();
 
 
-
-
-	//const Window* GetWindow() const;
 	ObjectManager* GetObjectManager();
 
 };
