@@ -56,9 +56,11 @@ target_include_directories(MyApp PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/GLstate
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics_Abstraction
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Utility
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Mesh
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interaction
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Rendering
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/3D_Objects
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui
     
 )

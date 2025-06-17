@@ -1,10 +1,10 @@
 #pragma once
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include <glad/glad.h> //1
+#include <GLFW/glfw3.h> //2
 
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
+#include "imgui.h" //3
+#include "imgui_impl_opengl3.h"
+#include "imgui_impl_glfw.h"
 
 #include "Controller.h"
 #include "Shader.h"
