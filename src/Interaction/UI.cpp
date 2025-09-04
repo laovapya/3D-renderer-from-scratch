@@ -205,7 +205,7 @@ void UI::DrawColoringMenu()
 				if(object->GetIfSelected())
 				{
 					object->SetColor(
-						glm::vec4(colorBuffer[0], colorBuffer[1], colorBuffer[2], colorBuffer[3]));
+						colorBuffer[0], colorBuffer[1], colorBuffer[2], colorBuffer[3]);
 					if(object->GetType() == Object3D::type::lightsource)
 					{
 						window->GetLitShader()->Activate();

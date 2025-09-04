@@ -1,8 +1,5 @@
 #include "Window.h"
 
-#include "Camera.h"
-#include "imgui_internal.h"
-
 Window::Window()
 {
 
@@ -81,7 +78,9 @@ void Window::SetWindowParameters()
 
 	glEnable(GL_DEPTH_TEST); //to prevent rendering back vertices
 	glPolygonMode(GL_FILL, GL_FILL);
-	glClearColor(color.x, color.y, color.z, color.w);
+	glClearColor(color.x, color.y, color.z, 1);
+
+	//Matrix4 projection = Matrix4::Perspective(0.785f, Window::GetAspectRatio(), 0.1f, 1000.0f);
 }
 
 void Window::InitFBO(int width, int height)
@@ -132,26 +131,25 @@ void Window::RegisterEvents()
 
 void Window::InitShaders()
 {
-	glm::mat4 projection =
-		glm::perspective(glm::radians(45.0f), Window::GetAspectRatio(), 0.1f, 100.0f);
+	Matrix4 projection = Matrix4::Perspective(0.785f, Window::GetAspectRatio(), 0.1f, 1000.0f);
 
 	//SHADER_DIR is defined in CMakeLists.txt
 	litShader = Shader(SHADER_DIR "lit.vert", SHADER_DIR "lit.frag");
 	litShader.Activate();
 	litShader.SetProjectionMatrix(projection);
-	litShader.SetViewMatrix(glm::mat4(1.0f));
-	litShader.SetLocalMatrix(glm::mat4(1.0f));
+	litShader.SetViewMatrix(Matrix4());
+	litShader.SetLocalMatrix(Matrix4());
 
 	litShader.SetAlpha(1.0f);
-	litShader.SetRenderColor(glm::vec3(1.0f, 0.4f, 0.8f)); //pink init
+	litShader.SetRenderColor(Vector3(1.0f, 0.4f, 0.8f)); //pink init
 
 	defaultShader = Shader(SHADER_DIR "default.vert", SHADER_DIR "default.frag");
 	defaultShader.Activate();
 	defaultShader.SetProjectionMatrix(projection);
-	defaultShader.SetViewMatrix(glm::mat4(1.0f));
-	defaultShader.SetLocalMatrix(glm::mat4(1.0f));
+	defaultShader.SetViewMatrix(Matrix4());
+	defaultShader.SetLocalMatrix(Matrix4());
 	defaultShader.SetAlpha(1.0f);
-	defaultShader.SetRenderColor(glm::vec3(1.0f, 0.4f, 0.8f)); //pink init
+	defaultShader.SetRenderColor(Vector3(1.0f, 0.4f, 0.8f)); //pink init
 }
 
 void Window::InitImGui()
@@ -180,7 +178,8 @@ void Window::framebuffer_size_callback(int width, int height) //by instance
 	ResizeFBO(width, height);
 	aspectRatio = width * sceneXpercent / (height * sceneYpercent);
 	glViewport(0, 0, width, height);
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+	Matrix4 projection = Matrix4::Perspective(0.785f, Window::GetAspectRatio(), 0.1f, 1000.0f);
+
 	litShader.Activate();
 	litShader.SetProjectionMatrix(projection);
 	defaultShader.Activate();

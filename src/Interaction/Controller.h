@@ -1,16 +1,14 @@
 #pragma once
 #include "Camera.h"
+#include "Vector3.h"
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
 
 class Controller
 {
 private:
 	float mouseSpeed = 30;
-
 	float panSpeed = 10;
 	float zoomSpeed = 1;
-
 	float rotationSpeed = 20;
 
 	float mouseLastX = 400;
@@ -28,16 +26,15 @@ public:
 		static Controller instance;
 		return instance;
 	}
+
 	static bool GetScaling();
 	static bool GetRotating();
 	static bool GetTranslating();
 
-	static glm::vec3 GetTransformVector(const Camera* currentCamera);
-
+	static Vector3 GetTransformVector(const Camera* currentCamera);
 	static void MoveCamera(GLFWwindow* window, Camera* currentCamera);
 
 	static void SwitchState(GLFWwindow* window, int key, int scancode, int action, int mods);
-
 	static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
 
 	bool isScaling = false;
@@ -49,6 +46,5 @@ public:
 	bool isZaxisEnabled = false;
 
 	static void ResetMouse();
-
 	static float GetRotationSpeed();
 };

@@ -1,37 +1,31 @@
 #pragma once
-#include<glad/glad.h>
-#include<string>
-#include<fstream>
-#include<sstream>
-#include<iostream>
-#include<cerrno>
+#include <cerrno>
+#include <fstream>
+#include <glad/glad.h>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "Matrix4.h"
+#include "Vector3.h"
 
-#include<vector>
+// this class manages shaders.
+// vertex shader transforms VAO vertices using matrices
+// fragment shader changes vertex color
 
-//this class manages shaders.
-//using vertex shader to transform VAO's vertices using matrices, fragment shader to change the vertex color. 
-
-class Shader {
+class Shader
+{
 private:
-
 public:
 	GLuint ID;
 
-	//separate shaders into their own files and compile them during runtime because they are not written in CPP.
-	//The communication between our classes and shaders is done via uniforms - values in shader scripts that can be written to from outside the file. 
-	//To write into the uniform we need its location. It is set into these fields in the constructor.
+	// uniform locations
 	int viewMatrixLoc;
 	int localMatrixLoc;
 	int colorLoc;
 	int alphaLoc;
 	int projectionLoc;
-	/*int lightColorLoc;
-	int lightPosLoc;*/
-
 	int lightAmountLoc;
 	int lightPositionsLoc;
 	int lightColorsLoc;
@@ -42,16 +36,17 @@ public:
 	void Activate() const;
 	void Delete() const;
 
-	//Writing into the uniforms
-	void SetViewMatrix(glm::mat4 matrix) const;
-	void SetLocalMatrix(glm::mat4 matrix) const;
-	void SetRenderColor(glm::vec3 color) const;
+	// write into uniforms
+	void SetViewMatrix(const Matrix4& matrix) const;
+	void SetLocalMatrix(const Matrix4& matrix) const;
+	void SetRenderColor(const Vector3& color) const;
 	void SetAlpha(float alpha) const;
-	void SetProjectionMatrix(glm::mat4 matrix) const;
-
+	void SetProjectionMatrix(const Matrix4& matrix) const;
 
 	void SetLightAmount(int amount) const;
-	void SetLightColors(const std::vector<glm::vec3>& colors) const;
-	void SetLightPositions(const std::vector<glm::vec3>& positions) const;
-	void SetLightUniforms(int amount, const std::vector<glm::vec3>& colors, const std::vector<glm::vec3>& positions) const;
+	void SetLightColors(const std::vector<Vector3>& colors) const;
+	void SetLightPositions(const std::vector<Vector3>& positions) const;
+	void SetLightUniforms(int amount,
+						  const std::vector<Vector3>& colors,
+						  const std::vector<Vector3>& positions) const;
 };

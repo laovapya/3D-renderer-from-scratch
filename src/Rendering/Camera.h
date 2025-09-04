@@ -1,34 +1,33 @@
 #pragma once
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
+#include "Utility/Matrix4.h"
+#include "Utility/Quaternion.h"
+#include "Utility/Vector3.h"
 class Camera
 {
 private:
-	const glm::vec3 worldUp = glm::vec3(0, 1, 0);
+	const Vector3 worldUp = Vector3(0, 1, 0);
 
-	glm::vec3 position;
-	glm::vec3 target;
+	Vector3 position;
+	Vector3 target;
 
-	glm::mat4 view;
+	Matrix4 view;
 
 	float panSpeed = 10;
 	float orbitSpeed = 10;
 
-	glm::vec3 right;
-	glm::vec3 up;
-	glm::vec3 forward;
+	Vector3 right;
+	Vector3 up;
+	Vector3 forward;
 
 public:
 	Camera();
 
-	glm::mat4 GetViewMatrix() const;
+	Matrix4 GetViewMatrix() const;
 
-	void Pan(glm::vec3);
-	void Orbit(glm::vec3 angle);
+	void Pan(Vector3 offset);
+	void Orbit(Vector3 angle);
 
-	glm::vec3 GetRight() const;
-	glm::vec3 GetUp() const;
-	glm::vec3 GetForward() const;
+	Vector3 GetRight() const;
+	Vector3 GetUp() const;
+	Vector3 GetForward() const;
 };

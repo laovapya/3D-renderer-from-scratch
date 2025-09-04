@@ -3,11 +3,14 @@
 #include <GLFW/glfw3.h> //2
 
 #include "imgui.h" //3
-#include "imgui_impl_opengl3.h"
 #include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#include "imgui_internal.h"
 
 #include "Controller.h"
 #include "Shader.h"
+
+#include "Utility/Vector3.h"
 
 //This class intializes the window and fires all related events.
 class Window
@@ -24,7 +27,7 @@ private:
 	float sceneYpercent = 0.8f;
 
 	//window background color
-	glm::vec4 color = glm::vec4(0.4f, 0.4f, 0.4f, 1); //grey
+	Vector3 color = Vector3(0.4f, 0.4f, 0.4f); //grey
 
 	Shader litShader;
 	Shader defaultShader;
@@ -34,6 +37,8 @@ private:
 	GLuint fbo;
 	GLuint rbo;
 	GLuint colorTexture;
+
+	//Matrix4 projection;
 
 	void InitDimensions();
 

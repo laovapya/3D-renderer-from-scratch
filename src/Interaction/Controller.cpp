@@ -1,15 +1,12 @@
 #include "Controller.h"
 #include "DeltaTime.h"
 
-Controller::Controller()
-{
-	;
-}
+Controller::Controller() { }
 
 void Controller::SwitchState(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-
 	Controller& instance = Controller::GetInstance();
+
 	if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
@@ -38,6 +35,7 @@ void Controller::SwitchState(GLFWwindow* window, int key, int scancode, int acti
 		instance.isRotating = false;
 	}
 }
+
 void Controller::MouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
 	Controller& instance = Controller::GetInstance();
@@ -63,53 +61,45 @@ bool Controller::GetTranslating()
 	return GetInstance().isTranslating;
 }
 
-glm::vec3 Controller::GetTransformVector(const Camera* currentCamera)
+Vector3 Controller::GetTransformVector(const Camera* currentCamera)
 {
-	glm::vec3 v(0, 0, 0);
+	Vector3 v(0, 0, 0);
 	Controller& instance = Controller::GetInstance();
 
-	glm::vec3 mouseVector = currentCamera->GetRight() * instance.mouseXoffset +
-							currentCamera->GetUp() * instance.mouseYoffset;
+	Vector3 mouseVector = currentCamera->GetRight() * instance.mouseXoffset +
+						  currentCamera->GetUp() * instance.mouseYoffset;
+
 	if(instance.isXaxisEnabled)
-		v += mouseVector.x * glm::vec3(1, 0, 0);
-
+		v += mouseVector.x * Vector3(1, 0, 0);
 	if(instance.isYaxisEnabled)
-		v += mouseVector.y * glm::vec3(0, 1, 0);
-
+		v += mouseVector.y * Vector3(0, 1, 0);
 	if(instance.isZaxisEnabled)
-		v += mouseVector.z * glm::vec3(0, 0, 1);
+		v += mouseVector.z * Vector3(0, 0, 1);
 
-	return v * -1.0f * instance.mouseSpeed;
+	return v * (-1.0f * instance.mouseSpeed);
 }
 
 void Controller::MoveCamera(GLFWwindow* window, Camera* currentCamera)
 {
 	Controller& instance = Controller::GetInstance();
+	float dt = DeltaTime::GetDeltaTime();
 
 	if(glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-	{
-		currentCamera->Pan(glm::vec3(instance.mouseXoffset, instance.mouseYoffset, 0) *
-						   DeltaTime::GetDeltaTime());
-	}
+		currentCamera->Pan(Vector3(instance.mouseXoffset, instance.mouseYoffset, 0) * dt);
+
 	if(glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
-	{
-		currentCamera->Pan(glm::vec3(0, 0, 1) * instance.zoomSpeed * DeltaTime::GetDeltaTime());
-	}
+		currentCamera->Pan(Vector3(0, 0, 1) * instance.zoomSpeed * dt);
+
 	if(glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS)
-	{
-		currentCamera->Pan(glm::vec3(0, 0, -1) * instance.zoomSpeed * DeltaTime::GetDeltaTime());
-	}
+		currentCamera->Pan(Vector3(0, 0, -1) * instance.zoomSpeed * dt);
+
 	if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
-	{
-		currentCamera->Orbit(-glm::vec3(instance.mouseYoffset, instance.mouseXoffset, 0) *
-							 DeltaTime::GetDeltaTime());
-	}
+		currentCamera->Orbit(-Vector3(-instance.mouseYoffset, instance.mouseXoffset, 0) * dt);
 }
 
 void Controller::ResetMouse()
 {
 	Controller& instance = GetInstance();
-
 	instance.mouseXoffset = 0;
 	instance.mouseYoffset = 0;
 }

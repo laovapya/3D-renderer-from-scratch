@@ -1,5 +1,4 @@
 #include "Scene.h"
-
 #include "DeltaTime.h"
 #include "VertexData.h"
 
@@ -24,39 +23,38 @@ Scene::~Scene()
 
 void Scene::DrawGrid()
 {
-
 	defaultShader->Activate();
 	defaultShader->SetViewMatrix(currentCamera->GetViewMatrix());
-	defaultShader->SetLocalMatrix(glm::mat4(1.0f));
+	defaultShader->SetLocalMatrix(Matrix4()); // use identity matrix
 
 	defaultShader->SetAlpha(0.7f);
 
-	defaultShader->SetRenderColor(glm::vec3(1, 0, 0));
+	defaultShader->SetRenderColor(Vector3(1, 0, 0));
 	VertexData::GetXaxisVAO().Bind();
 	glDrawArrays(GL_LINES, 0, 2);
 
-	defaultShader->SetRenderColor(glm::vec3(0, 1, 0));
+	defaultShader->SetRenderColor(Vector3(0, 1, 0));
 	VertexData::GetZaxisVAO().Bind();
 	glDrawArrays(GL_LINES, 0, 2);
 
 	defaultShader->SetAlpha(0.9f);
-	defaultShader->SetRenderColor(glm::vec3(0.2f, 0.2f, 0.2f));
+	defaultShader->SetRenderColor(Vector3(0.2f, 0.2f, 0.2f));
 	VertexData::GetGridVAO().Bind();
 	glDrawArrays(GL_LINES, 0, VertexData::GetGridIndexCount());
 }
 
 void Scene::Update()
-{ //goes into main loop
+{
 	Controller::MoveCamera(window->GetWindow(), currentCamera);
 
-	glm::vec3 v = Controller::GetTransformVector(currentCamera);
+	Vector3 v = Controller::GetTransformVector(currentCamera);
 	for(const auto& object : manager.GetCreatedObjects())
 	{
 		object->GetVAO().Bind();
 
 		if(object->GetIfSelected())
 		{
-			//transformations
+			// transformations
 			if(Controller::GetTranslating())
 				object->Translate(v * DeltaTime::GetDeltaTime());
 			if(Controller::GetScaling())
@@ -77,7 +75,6 @@ void Scene::Update()
 
 		if(object->GetIfSelected())
 		{
-
 			defaultShader->Activate();
 			defaultShader->SetViewMatrix(currentCamera->GetViewMatrix());
 			defaultShader->SetLocalMatrix(object->GetObjectMatrix());

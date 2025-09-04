@@ -6,7 +6,7 @@ Lightsource::Lightsource()
 
 	objectType = lightsource;
 	isLit = false;
-	color = glm::vec3(1.0f, 0.65f, 0.0f); //bright orange
+	SetColor(Vector3(1.0f, 0.65f, 0.0f), 1.0f); //bright orange
 	SetVAO(8);
 }
 
@@ -74,7 +74,7 @@ VAO Lightsource::GenerateVAO(int& indexCount, int segmentCount) const
 	return sphereVAO;
 }
 
-void Lightsource::Scale(glm::vec3 v)
+void Lightsource::Scale(Vector3 v)
 {
 	;
 }

@@ -6,6 +6,7 @@
 #include "Object3D.h"
 #include "Sphere.h"
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -32,7 +33,6 @@ private:
 public:
 	ObjectManager();
 
-	//Adding new objects
 	int AddCube();
 	int AddCone();
 	int AddCylinder();
@@ -47,6 +47,6 @@ public:
 
 	const std::vector<std::unique_ptr<Object3D>>& GetCreatedObjects();
 
-	const std::vector<glm::vec3> GetLightsourcePositions() const;
-	const std::vector<glm::vec3> GetLightsourceColors() const;
+	const std::vector<Vector3> GetLightsourcePositions() const;
+	const std::vector<Vector3> GetLightsourceColors() const;
 };

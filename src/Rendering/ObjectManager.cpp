@@ -3,14 +3,12 @@
 
 ObjectManager::ObjectManager()
 {
-
 	int id = AddLightsource();
 	createdObjects[0]->Translate({6, 4, -8});
 }
 
 void ObjectManager::DeleteObject(Object3D* object)
 {
-
 	objectCount--;
 
 	switch(object->GetType())
@@ -37,17 +35,16 @@ void ObjectManager::DeleteObject(Object3D* object)
 		break;
 	}
 }
+
 void ObjectManager::RemoveObject(int id)
 {
 	auto it1 = createdObjects.begin();
 	for(const auto& object : createdObjects)
 	{
-
 		if(object->GetID() == id)
 		{
 			DeleteObject(object.get());
 			createdObjects.erase(it1);
-
 			return;
 		}
 		it1++;
@@ -56,13 +53,12 @@ void ObjectManager::RemoveObject(int id)
 
 void ObjectManager::RemoveSelectedObjects()
 {
-
 	auto it = createdObjects.begin();
 	while(it != createdObjects.end())
 	{
 		if((*it)->GetIfSelected())
 		{
-			DeleteObject((*it).get());
+			DeleteObject(it->get());
 			it = createdObjects.erase(it);
 		}
 		else
@@ -74,6 +70,7 @@ int ObjectManager::AddObject(std::unique_ptr<Object3D> obj)
 {
 	for(const auto& object : createdObjects)
 		object->SetSelected(false);
+
 	createdObjects.push_back(std::move(obj));
 	createdObjects.back()->SetSelected(true);
 	return createdObjects.back()->GetID();
@@ -114,9 +111,9 @@ int ObjectManager::AddLightsource()
 	return AddObject(std::move(light));
 }
 
-const std::vector<glm::vec3> ObjectManager::GetLightsourcePositions() const
+const std::vector<Vector3> ObjectManager::GetLightsourcePositions() const
 {
-	std::vector<glm::vec3> positions;
+	std::vector<Vector3> positions;
 	for(const auto& object : createdObjects)
 	{
 		if(object->GetType() == Object3D::type::lightsource)
@@ -126,9 +123,10 @@ const std::vector<glm::vec3> ObjectManager::GetLightsourcePositions() const
 	}
 	return positions;
 }
-const std::vector<glm::vec3> ObjectManager::GetLightsourceColors() const
+
+const std::vector<Vector3> ObjectManager::GetLightsourceColors() const
 {
-	std::vector<glm::vec3> colors;
+	std::vector<Vector3> colors;
 	for(const auto& object : createdObjects)
 	{
 		if(object->GetType() == Object3D::type::lightsource)

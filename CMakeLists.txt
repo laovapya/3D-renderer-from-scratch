@@ -3,7 +3,7 @@ project(3D_Renderer)
 
 # Enforce vcpkg 
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    message(FATAL_ERROR "Use: cmake -B build -DCMAKE_TOOLCHAIN_FILE=[vcpkg]/scripts/buildsystems/vcpkg.cmake")
+  message(WARNING "CMAKE_TOOLCHAIN_FILE not set. vcpkg integration may fail.")
 endif()
 
 # Find packages 

@@ -121,6 +121,12 @@ SpaceBeforeInheritanceColon: true
 SortUsingDeclarations: true
 SortIncludes: true
 
+IncludeCategories:
+  - Regex: '^<glad/glad.h>'
+    Priority: 1
+  - Regex: '.*'
+    Priority: 2
+
 # Comments are for developers, they should arrange them
 ReflowComments: false
 
