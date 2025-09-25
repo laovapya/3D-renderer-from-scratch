@@ -17,6 +17,4 @@ public:
 
 	Quaternion operator*(const Quaternion& other) const;
 	Vector3 operator*(const Vector3& v) const;
-
-	Matrix4 toMatrix4() const;
 };

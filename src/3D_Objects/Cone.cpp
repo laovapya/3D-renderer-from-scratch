@@ -5,56 +5,71 @@ Cone::Cone(int segmentCount)
 {
 
 	objectType = cone;
-	isLit = true;
 	SetVAO(segmentCount);
 }
 
 VAO Cone::GenerateVAO(int& indexCount, int segmentCount) const
 {
 	const float PI = 3.14159265359f;
+	const float radius = 0.5f;
+
 	std::vector<float> vertices;
+	std::vector<float> texCoords;
 	std::vector<int> indices;
 
-	// add top and bottom center points
-	vertices.insert(vertices.end(), {0, 0.5f, 0}); // top vertex
-	vertices.insert(vertices.end(), {0, -0.5f, 0}); // bottom center
+	auto pushVertex = [&](const Vector3& v, float u, float vv) {
+		vertices.push_back(v.x);
+		vertices.push_back(v.y);
+		vertices.push_back(v.z);
+		texCoords.push_back(u);
+		texCoords.push_back(vv);
+	};
 
-	// add side vertices for bottom, up face normals
-	for(int i = 0; i < segmentCount; ++i)
+	// bottom center
+	pushVertex({0, -0.5f, 0}, 0.5f, 0.5f);
+	int bottomCenterIndex = 0;
+	int sideStartIndex = 1;
+
+	for(int i = 0; i <= segmentCount; ++i)
 	{
-		float angle = i * 2 * PI / segmentCount; // radians
-		float x = 0.5f * cos(angle);
-		float y = -0.5f;
-		float z = 0.5f * sin(angle);
-		vertices.insert(vertices.end(), {x, y, z});
+		int idx = i % segmentCount;
+		float angle = 2 * PI * idx / segmentCount;
+		Vector3 bottom{radius * cos(angle), -0.5f, radius * sin(angle)};
+		Vector3 top{0.0f, 0.5f, 0.0f};
+
+		float u = (float)i / segmentCount;
+		pushVertex(bottom, u, 0.0f);
+		pushVertex(top, u, 1.0f);
 	}
 
-	// add side vertices again, for side normals
 	for(int i = 0; i < segmentCount; ++i)
 	{
-		float angle = i * 2 * PI / segmentCount; // radians
-		float x = 0.5f * cos(angle);
-		float y = -0.5f;
-		float z = 0.5f * sin(angle);
-		vertices.insert(vertices.end(), {x, y, z});
+		int b0 = sideStartIndex + i * 2;
+		int t0 = b0 + 1;
+		int b1 = sideStartIndex + (i + 1) * 2;
+
+		indices.push_back(b0);
+		indices.push_back(b1);
+		indices.push_back(t0);
 	}
 
-	// indices for top triangles
-	for(int i = 2; i < 2 + segmentCount; ++i)
-		indices.insert(indices.end(), {0, i, (i + 1 == 2 + segmentCount) ? 2 : i + 1});
-
-	// indices for bottom triangles
-	for(int i = 2 + segmentCount; i < 2 + 2 * segmentCount; ++i)
-		indices.insert(indices.end(),
-					   {(i + 1 == 2 + 2 * segmentCount) ? 2 + segmentCount : i + 1, i, 1});
+	for(int i = 0; i < segmentCount; ++i)
+	{
+		int b0 = sideStartIndex + i * 2;
+		int b1 = sideStartIndex + (i + 1) * 2;
+		indices.push_back(b1);
+		indices.push_back(b0);
+		indices.push_back(bottomCenterIndex);
+	}
 
 	VBO vbo1(vertices.data(), sizeof(float) * vertices.size());
 	std::vector<float> normals = CalculateNormals(vertices, indices);
 	VBO vbo2(normals.data(), sizeof(float) * normals.size());
+	VBO vbo3(texCoords.data(), sizeof(float) * texCoords.size());
 	EBO ebo(indices.data(), sizeof(int) * indices.size());
-	VAO coneVAO;
-	coneVAO.Link(vbo1, vbo2, ebo);
 
+	VAO coneVAO;
+	coneVAO.Link(vbo1, vbo2, vbo3, ebo);
 	indexCount = indices.size();
 	return coneVAO;
 }

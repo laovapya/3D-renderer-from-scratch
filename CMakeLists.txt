@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.15)
 project(3D_Renderer)
 
-# Enforce vcpkg 
+# warn if vcpkg not configured
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-  message(WARNING "CMAKE_TOOLCHAIN_FILE not set. vcpkg integration may fail.")
+    message(WARNING "CMAKE_TOOLCHAIN_FILE not set. vcpkg integration may fail.")
 endif()
 
-# Find packages 
+# vcpkg packages
 find_package(glfw3 REQUIRED CONFIG)
 find_package(glad REQUIRED)
-find_package(glm REQUIRED)
+find_package(nfd REQUIRED CONFIG) 
 
-# Setup ImGui (Docking Branch)
+# ImGui 
 add_library(imgui STATIC
     external/imgui/imgui.cpp
     external/imgui/imgui_demo.cpp
@@ -22,46 +22,44 @@ add_library(imgui STATIC
     external/imgui/backends/imgui_impl_opengl3.cpp
 )
 
-
 target_compile_definitions(imgui PRIVATE 
     IMGUI_ENABLE_DOCKING
     IMGUI_ENABLE_VIEWPORTS
 )
 
 target_include_directories(imgui PUBLIC
+     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interaction
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Rendering
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Utility
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics_Abstraction
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/3D_Objects
     ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui/backends
-
+      ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui/backends
+      ${CMAKE_CURRENT_SOURCE_DIR}/external/stb
 )
 
 target_link_libraries(imgui PRIVATE glfw)
 
-# Main executable 
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
+
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS 
+    "src/*.cpp"
+    "external/stb/stb_image.cpp"
+)
+
 add_executable(MyApp ${SOURCES})
 
-# Define shader directory 
+# set shader path
 target_compile_definitions(MyApp PRIVATE 
     SHADER_DIR="${CMAKE_SOURCE_DIR}/assets/"
 )
 
+
 target_link_libraries(MyApp PRIVATE
     glfw
     glad::glad
-    glm::glm
     imgui
+    nfd::nfd
 )
 
-target_include_directories(MyApp PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics_Abstraction
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Utility
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Interaction
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Rendering
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/3D_Objects
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui
-    
-)
 

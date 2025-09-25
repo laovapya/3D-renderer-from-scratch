@@ -1,6 +1,6 @@
 #include "Matrix4.h"
+#include "Quaternion.h"
 #include <cmath>
-
 Matrix4::Matrix4()
 {
 	for(int i = 0; i < 4; i++)
@@ -54,16 +54,16 @@ Vector3 Matrix4::operator*(const Vector3& v) const
 	return {x, y, z};
 }
 
-Matrix4 Matrix4::Perspective(float fovRadians, float aspect, float nearPlane, float farPlane)
+Matrix4 Matrix4::Perspective(float fovYRadians, float aspect, float nearPlane, float farPlane)
 {
 	Matrix4 result;
-	float f = 1.0f / std::tan(fovRadians * 0.5f);
-	result.m[0][0] = f / aspect;
+	float t = 1.0f / std::tan(fovYRadians * 0.5f);
+	result.m[0][0] = t / aspect;
 	result.m[0][1] = 0;
 	result.m[0][2] = 0;
 	result.m[0][3] = 0;
 	result.m[1][0] = 0;
-	result.m[1][1] = f;
+	result.m[1][1] = t;
 	result.m[1][2] = 0;
 	result.m[1][3] = 0;
 	result.m[2][0] = 0;
@@ -110,4 +110,34 @@ float* Matrix4::data()
 const float* Matrix4::data() const
 {
 	return &m[0][0];
+}
+
+Matrix4 Matrix4::Rotate(const Quaternion& quaternion)
+{
+	Quaternion q = quaternion.normalized();
+
+	float xx = q.x * q.x;
+	float yy = q.y * q.y;
+	float zz = q.z * q.z;
+	float xy = q.x * q.y;
+	float xz = q.x * q.z;
+	float yz = q.y * q.z;
+	float wx = q.w * q.x;
+	float wy = q.w * q.y;
+	float wz = q.w * q.z;
+
+	Matrix4 m;
+	m.m[0][0] = 1.0f - 2.0f * (yy + zz);
+	m.m[0][1] = 2.0f * (xy - wz);
+	m.m[0][2] = 2.0f * (xz + wy);
+
+	m.m[1][0] = 2.0f * (xy + wz);
+	m.m[1][1] = 1.0f - 2.0f * (xx + zz);
+	m.m[1][2] = 2.0f * (yz - wx);
+
+	m.m[2][0] = 2.0f * (xz - wy);
+	m.m[2][1] = 2.0f * (yz + wx);
+	m.m[2][2] = 1.0f - 2.0f * (xx + yy);
+
+	return m;
 }

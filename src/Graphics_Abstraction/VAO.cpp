@@ -1,39 +1,60 @@
-#include"VAO.h"
-#include"EBO.h"
+#include "VAO.h"
+#include "EBO.h"
 
 VAO::VAO()
 {
 	glGenVertexArrays(1, &ID);
 }
 
+void VAO::Link(VBO& vertices, VBO& normals, VBO& texCoords, EBO& EBO)
+{
+	Bind();
+	EBO.Bind();
+
+	// positions
+	vertices.Bind();
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// normals
+	normals.Bind();
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+
+	// texture coordinates
+	texCoords.Bind();
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(2);
+
+	Unbind();
+	EBO.Unbind();
+}
 
 void VAO::Link(VBO& vertices, VBO& normals, EBO& EBO)
 {
 	Bind();
 	EBO.Bind();
-		vertices.Bind();
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //position vectors
-		glEnableVertexAttribArray(0);
-		//vertices.Unbind();
-		normals.Bind();
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //normal vectors
-		glEnableVertexAttribArray(1);
-		//normals.Unbind();
+	vertices.Bind();
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //position vectors
+	glEnableVertexAttribArray(0);
+	//vertices.Unbind();
+	normals.Bind();
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //normal vectors
+	glEnableVertexAttribArray(1);
+	//normals.Unbind();
 	Unbind();
 
-	
 	EBO.Unbind();
 }
-void VAO::Link(VBO& vbo) { //no normals, no indices 
+void VAO::Link(VBO& vbo)
+{ //no normals, no indices
 	Bind();
 	vbo.Bind();
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); 
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	vbo.Unbind();
 	Unbind();
 }
-
-
 
 void VAO::Bind()
 {

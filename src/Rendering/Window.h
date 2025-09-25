@@ -12,22 +12,18 @@
 
 #include "Utility/Vector3.h"
 
-//This class intializes the window and fires all related events.
 class Window
 {
 private:
-	//Window's width, height
 	float width;
 	float height;
 
-	//aspect ratio of the scene subwindow
-	float aspectRatio;
+	float sceneAspectRatio;
 
 	float sceneXpercent = 0.7f;
 	float sceneYpercent = 0.8f;
 
-	//window background color
-	Vector3 color = Vector3(0.4f, 0.4f, 0.4f); //grey
+	Vector3 backgroundColor = Vector3(0.4f, 0.4f, 0.4f); //grey
 
 	Shader litShader;
 	Shader defaultShader;
@@ -36,18 +32,14 @@ private:
 
 	GLuint fbo;
 	GLuint rbo;
-	GLuint colorTexture;
-
-	//Matrix4 projection;
+	GLuint sceneTexture;
 
 	void InitDimensions();
 
-	//Init window and libraries
 	void InitGLFW();
 	void CreateWindow();
 	void InitGlad();
 
-	//set the viewport, enable wireframe mode, enable depth testing so backfaces arent rendered, among other things.
 	void SetWindowParameters();
 
 	//register keyboard press and window size change events
@@ -62,7 +54,6 @@ private:
 public:
 	Window();
 
-	//terminate all processes
 	~Window();
 
 	//Called first in the main loop
@@ -91,5 +82,5 @@ public:
 	//ImGui's functionality to dock the sub windows of UI.
 	void SetUpDocking() const;
 
-	GLuint GetColorTexture() const;
+	GLuint GetSceneTexture() const;
 };

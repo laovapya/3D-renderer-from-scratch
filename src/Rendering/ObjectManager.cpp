@@ -1,5 +1,4 @@
 #include "ObjectManager.h"
-#include <iostream>
 
 ObjectManager::ObjectManager()
 {
@@ -131,7 +130,7 @@ const std::vector<Vector3> ObjectManager::GetLightsourceColors() const
 	{
 		if(object->GetType() == Object3D::type::lightsource)
 		{
-			colors.push_back(object->GetColor());
+			colors.push_back(object->GetMaterial().GetColor());
 		}
 	}
 	return colors;

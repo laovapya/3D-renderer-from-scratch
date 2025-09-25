@@ -37,7 +37,7 @@ void Window::InitDimensions()
 	width = 2000;
 	height = 1200;
 
-	aspectRatio = width * sceneXpercent / (height * sceneYpercent);
+	sceneAspectRatio = width * sceneXpercent / (height * sceneYpercent);
 }
 
 void Window::InitGLFW()
@@ -78,7 +78,7 @@ void Window::SetWindowParameters()
 
 	glEnable(GL_DEPTH_TEST); //to prevent rendering back vertices
 	glPolygonMode(GL_FILL, GL_FILL);
-	glClearColor(color.x, color.y, color.z, 1);
+	glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1);
 
 	//Matrix4 projection = Matrix4::Perspective(0.785f, Window::GetAspectRatio(), 0.1f, 1000.0f);
 }
@@ -91,10 +91,10 @@ void Window::InitFBO(int width, int height)
 
 void Window::ResizeFBO(int width, int height)
 {
-	if(colorTexture)
+	if(sceneTexture)
 	{
-		glDeleteTextures(1, &colorTexture);
-		colorTexture = 0;
+		glDeleteTextures(1, &sceneTexture);
+		sceneTexture = 0;
 	}
 	if(rbo)
 	{
@@ -104,12 +104,12 @@ void Window::ResizeFBO(int width, int height)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-	glGenTextures(1, &colorTexture);
-	glBindTexture(GL_TEXTURE_2D, colorTexture);
+	glGenTextures(1, &sceneTexture);
+	glBindTexture(GL_TEXTURE_2D, sceneTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sceneTexture, 0);
 
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
@@ -123,7 +123,6 @@ void Window::ResizeFBO(int width, int height)
 }
 void Window::RegisterEvents()
 {
-
 	glfwSetFramebufferSizeCallback(window, Window::framebuffer_size_callback); //
 	glfwSetKeyCallback(window, Controller::SwitchState); //keyboard
 	glfwSetCursorPosCallback(window, Controller::MouseCallback); //mouse
@@ -131,14 +130,14 @@ void Window::RegisterEvents()
 
 void Window::InitShaders()
 {
-	Matrix4 projection = Matrix4::Perspective(0.785f, Window::GetAspectRatio(), 0.1f, 1000.0f);
+	Matrix4 projection = Matrix4::Perspective(0.785f, Window::GetAspectRatio(), 0.1f, 200.0f);
 
 	//SHADER_DIR is defined in CMakeLists.txt
 	litShader = Shader(SHADER_DIR "lit.vert", SHADER_DIR "lit.frag");
 	litShader.Activate();
 	litShader.SetProjectionMatrix(projection);
 	litShader.SetViewMatrix(Matrix4());
-	litShader.SetLocalMatrix(Matrix4());
+	litShader.SetModelMatrix(Matrix4());
 
 	litShader.SetAlpha(1.0f);
 	litShader.SetRenderColor(Vector3(1.0f, 0.4f, 0.8f)); //pink init
@@ -147,7 +146,7 @@ void Window::InitShaders()
 	defaultShader.Activate();
 	defaultShader.SetProjectionMatrix(projection);
 	defaultShader.SetViewMatrix(Matrix4());
-	defaultShader.SetLocalMatrix(Matrix4());
+	defaultShader.SetModelMatrix(Matrix4());
 	defaultShader.SetAlpha(1.0f);
 	defaultShader.SetRenderColor(Vector3(1.0f, 0.4f, 0.8f)); //pink init
 }
@@ -176,7 +175,7 @@ void Window::InitImGui()
 void Window::framebuffer_size_callback(int width, int height) //by instance
 {
 	ResizeFBO(width, height);
-	aspectRatio = width * sceneXpercent / (height * sceneYpercent);
+	sceneAspectRatio = width * sceneXpercent / (height * sceneYpercent);
 	glViewport(0, 0, width, height);
 	Matrix4 projection = Matrix4::Perspective(0.785f, Window::GetAspectRatio(), 0.1f, 1000.0f);
 
@@ -252,7 +251,7 @@ float Window::GetHeight() const
 }
 float Window::GetAspectRatio() const
 {
-	return aspectRatio;
+	return sceneAspectRatio;
 }
 
 void Window::SetUpDocking() const
@@ -321,7 +320,7 @@ void Window::SetUpDocking() const
 
 			ImGui::DockBuilderDockWindow("Object list", dock_right_top);
 			ImGui::DockBuilderDockWindow("Transform menu", dock_right_middle);
-			ImGui::DockBuilderDockWindow("Coloring", dock_right_bottom);
+			ImGui::DockBuilderDockWindow("Material constructor", dock_right_bottom);
 
 			ImGui::DockBuilderFinish(dockspace_id);
 		}
@@ -331,7 +330,7 @@ void Window::SetUpDocking() const
 	ImGui::End();
 }
 
-GLuint Window::GetColorTexture() const
+GLuint Window::GetSceneTexture() const
 {
-	return colorTexture;
+	return sceneTexture;
 }

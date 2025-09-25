@@ -5,8 +5,8 @@
 
 #include "Matrix4.h"
 #include "Quaternion.h"
+#include "Rendering/Material.h"
 #include "Vector3.h"
-
 //The parent 3D object abstract class
 
 class Object3D
@@ -45,10 +45,12 @@ protected:
 										const std::vector<int>& indices) const;
 
 	type objectType;
-	bool isLit = true; //whether to use lit shader
 
-	Vector3 color = Vector3(1.0f, 1.0f, 0.6f); //The object color (pale yellow)
-	float colorAlpha;
+	Material material;
+	// bool isLit = true; //whether to use lit shader
+
+	// Vector3 color = Vector3(1.0f, 1.0f, 0.6f); //The object color (pale yellow)
+	// float colorAlpha;
 
 public:
 	std::string name;
@@ -79,18 +81,18 @@ public:
 	//We multiply each vertex in the VAO by a matrix to get the result.
 	//The matrix is constructed using the position, rotation, scale fields.
 
-	Matrix4 GetObjectMatrix() const;
+	const Matrix4 GetModelMatrix() const;
 
-	Vector3 GetBorderColor() const;
-	Vector3 GetColor() const;
-	void SetColor(const Vector3& color);
-	void SetColor(const Vector3& color, float alpha);
-	void SetColor(float r, float g, float b, float alpha);
+	// Vector3 GetBorderColor() const;
+	// Vector3 GetColor() const;
+	// void SetColor(const Vector3& color);
+	// void SetColor(const Vector3& color, float alpha);
+	// void SetColor(float r, float g, float b, float alpha);
 	type GetType() const;
-
+	Material& GetMaterial();
 	//whether the object is selected in the object list menu.
 
-	const static Vector3 selectColor; //Color outline displayed when an object is selected (blue)
+	//const static Vector3 selectColor; //Color outline displayed when an object is selected (blue)
 
-	bool GetIfLit() const; //whether to use lit shader
+	//bool GetIfLit() const; //whether to use lit shader
 };

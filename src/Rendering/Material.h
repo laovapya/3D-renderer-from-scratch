@@ -1,6 +1,6 @@
 #pragma once
 #include <glad/glad.h>
-#include "Graphics_Abstraction/TextureManager.h"
+//#include "Graphics_Abstraction/TextureManager.h"
 #include "Utility/Vector3.h"
 class Material
 {

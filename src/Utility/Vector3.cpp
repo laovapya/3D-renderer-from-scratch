@@ -35,8 +35,8 @@ float Vector3::magnitude() const
 }
 Vector3 Vector3::normalized() const
 {
-	float mag = magnitude();
-	return mag > 0 ? (*this) * (1.0f / mag) : Vector3();
+	float m = magnitude();
+	return m > 0 ? (*this) * (1.0f / m) : Vector3();
 }
 
 float Vector3::dot(const Vector3& a, const Vector3& b)

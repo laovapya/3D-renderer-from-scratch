@@ -1,6 +1,7 @@
 #pragma once
-#include "Vector3.h"
 
+#include "Vector3.h"
+class Quaternion;
 class Matrix4
 {
 public:
@@ -10,7 +11,7 @@ public:
 
 	static Matrix4 translation(const Vector3& t);
 	static Matrix4 scale(const Vector3& s);
-
+	static Matrix4 Rotate(const Quaternion& q);
 	Matrix4 operator*(const Matrix4& other) const;
 	Vector3 operator*(const Vector3& v) const; // assumes w=1
 

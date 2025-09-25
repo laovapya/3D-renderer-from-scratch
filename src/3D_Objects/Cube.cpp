@@ -6,7 +6,6 @@ Cube::Cube()
 {
 
 	objectType = cube;
-	isLit = true;
 	SetVAO(0);
 }
 VAO Cube::GenerateVAO(int& indexCount, int segmentCount) const
@@ -175,15 +174,75 @@ VAO Cube::GenerateVAO(int& indexCount, int segmentCount) const
 					 22,
 					 23,
 					 20};
+	float texCoords[] = {// back face
+						 0.0f,
+						 0.0f, // bottom-left
+						 1.0f,
+						 0.0f, // bottom-right
+						 1.0f,
+						 1.0f, // top-right
+						 0.0f,
+						 1.0f, // top-left
+
+						 // front face
+						 0.0f,
+						 0.0f,
+						 1.0f,
+						 0.0f,
+						 1.0f,
+						 1.0f,
+						 0.0f,
+						 1.0f,
+
+						 // left face
+						 0.0f,
+						 0.0f,
+						 1.0f,
+						 0.0f,
+						 1.0f,
+						 1.0f,
+						 0.0f,
+						 1.0f,
+
+						 // right face
+						 0.0f,
+						 0.0f,
+						 1.0f,
+						 0.0f,
+						 1.0f,
+						 1.0f,
+						 0.0f,
+						 1.0f,
+
+						 // bottom face
+						 0.0f,
+						 0.0f,
+						 1.0f,
+						 0.0f,
+						 1.0f,
+						 1.0f,
+						 0.0f,
+						 1.0f,
+
+						 // top face
+						 0.0f,
+						 0.0f,
+						 1.0f,
+						 0.0f,
+						 1.0f,
+						 1.0f,
+						 0.0f,
+						 1.0f};
 	VBO vbo1(vertices, sizeof(float) * 24 * 3);
 	//std::vector<float> normals = CalculateNormals(vertices, indices);
 	VBO vbo2(normals, sizeof(float) * 24 * 3);
+	VBO vbo3(texCoords, sizeof(float) * 24 * 2); //2 floats per UV
 
 	indexCount = 3 * 2 * 6;
 	EBO ebo(indices, sizeof(int) * indexCount);
 
 	VAO cubeVAO;
-	cubeVAO.Link(vbo1, vbo2, ebo);
+	cubeVAO.Link(vbo1, vbo2, vbo3, ebo);
 
 	return cubeVAO;
 }

@@ -9,34 +9,26 @@ void VertexData::SetGridVAO()
 {
 	const float length = 9999.0f;
 	const float spacing = gridSpacing;
-	const int amount = maxGridSize;
+	const int linesPerAxis = 250;
 
-	// X-axis line (red)
 	std::vector<float> vertices1 = {-length, 0.0f, 0.0f, length, 0.0f, 0.0f};
 	VBO vbo1(vertices1.data(), vertices1.size() * sizeof(float));
 	axisX.Link(vbo1);
 
-	// Z-axis line (blue)
 	std::vector<float> vertices2 = {0.0f, 0.0f, -length, 0.0f, 0.0f, length};
 	VBO vbo2(vertices2.data(), vertices2.size() * sizeof(float));
 	axisZ.Link(vbo2);
 
-	// Grid lines
 	std::vector<float> vertices3;
-	vertices3.reserve(amount); // Pre-allocate memory for better performance
-
-	// Vertical grid lines (parallel to Z-axis)
-	for(int i = 0; i < amount / 2; i += 6)
+	for(int i = -linesPerAxis; i <= linesPerAxis; i++)
 	{
-		float zPos = spacing * (i / 6 - 125);
-		vertices3.insert(vertices3.end(), {-length, 0.0f, zPos, length, 0.0f, zPos});
+		float x = i * spacing;
+		vertices3.insert(vertices3.end(), {x, 0.0f, -length, x, 0.0f, length});
 	}
-
-	// Horizontal grid lines (parallel to X-axis)
-	for(int i = amount / 2; i < amount; i += 6)
+	for(int i = -linesPerAxis; i <= linesPerAxis; i++)
 	{
-		float xPos = spacing * ((i - amount / 2) / 6 - 125);
-		vertices3.insert(vertices3.end(), {xPos, 0.0f, -length, xPos, 0.0f, length});
+		float z = i * spacing;
+		vertices3.insert(vertices3.end(), {-length, 0.0f, z, length, 0.0f, z});
 	}
 
 	VBO vbo3(vertices3.data(), vertices3.size() * sizeof(float));

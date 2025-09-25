@@ -16,11 +16,11 @@ git clone -b main --recurse-submodules https://github.com/laovapya/3D-renderer-f
 cd 3D-renderer-from-scratch
 
 
-./vcpkg install glfw3 glad
+./vcpkg install glfw3 glad nativefiledialog-extended
 
 
 
-run from a terminal where vcpkg’s bin is in PATH
+make sure vcpkg’s bin is in PATH
 
 
 cmake -B build -DCMAKE_TOOLCHAIN_FILE=[vcpkg]/scripts/buildsystems/vcpkg.cmake

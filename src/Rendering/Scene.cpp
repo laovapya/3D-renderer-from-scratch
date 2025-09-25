@@ -1,17 +1,17 @@
 #include "Scene.h"
-#include "DeltaTime.h"
-#include "VertexData.h"
 
 Scene::Scene(const Window* window)
 {
 	this->window = window;
-	currentCamera = new Camera();
-
+	// initialCamera = std::make_unique<Camera>();
+	// currentCamera = initialCamera.get();
 	litShader = window->GetLitShader();
 	defaultShader = window->GetDefaultShader();
 
 	window->GetLitShader()->Activate();
 	litShader->SetLightColors(manager.GetLightsourceColors());
+
+	TextureManager::GetInstance();
 }
 
 Scene::~Scene()
@@ -19,13 +19,15 @@ Scene::~Scene()
 	VertexData::GetGridVAO().Delete();
 	VertexData::GetXaxisVAO().Delete();
 	VertexData::GetZaxisVAO().Delete();
+	//manager.DeleteAllObjects();
+	TextureManager::UnloadAllTextures();
 }
 
 void Scene::DrawGrid()
 {
 	defaultShader->Activate();
 	defaultShader->SetViewMatrix(currentCamera->GetViewMatrix());
-	defaultShader->SetLocalMatrix(Matrix4()); // use identity matrix
+	defaultShader->SetModelMatrix(Matrix4()); // use identity matrix
 
 	defaultShader->SetAlpha(0.7f);
 
@@ -45,9 +47,9 @@ void Scene::DrawGrid()
 
 void Scene::Update()
 {
-	Controller::MoveCamera(window->GetWindow(), currentCamera);
+	Controller::MoveCamera(window->GetWindow(), initialCamera.get());
 
-	Vector3 v = Controller::GetTransformVector(currentCamera);
+	Vector3 v = Controller::GetTransformVector(initialCamera.get());
 	for(const auto& object : manager.GetCreatedObjects())
 	{
 		object->GetVAO().Bind();
@@ -62,14 +64,19 @@ void Scene::Update()
 			if(Controller::GetRotating())
 				object->Rotate(v * Controller::GetRotationSpeed() * DeltaTime::GetDeltaTime());
 		}
+		Material& material = object->GetMaterial();
 
-		const Shader* shader = object->GetIfLit() ? litShader : defaultShader;
+		const Shader* shader = material.GetIfLit() ? litShader : defaultShader;
 		shader->Activate();
-		litShader->SetLightPositions(manager.GetLightsourcePositions());
+		if(material.GetIfLit())
+		{
+			litShader->ActivateTexture(material.GetTextureID(), 0);
+			litShader->SetLightPositions(manager.GetLightsourcePositions());
+		}
 
 		shader->SetViewMatrix(currentCamera->GetViewMatrix());
-		shader->SetLocalMatrix(object->GetObjectMatrix());
-		shader->SetRenderColor(object->GetColor());
+		shader->SetModelMatrix(object->GetModelMatrix());
+		shader->SetRenderColor(object->GetMaterial().GetColor());
 
 		glDrawElements(GL_TRIANGLES, object->GetIndexCount(), GL_UNSIGNED_INT, 0);
 
@@ -77,8 +84,8 @@ void Scene::Update()
 		{
 			defaultShader->Activate();
 			defaultShader->SetViewMatrix(currentCamera->GetViewMatrix());
-			defaultShader->SetLocalMatrix(object->GetObjectMatrix());
-			defaultShader->SetRenderColor(Object3D::selectColor);
+			defaultShader->SetModelMatrix(object->GetModelMatrix());
+			defaultShader->SetRenderColor(Material::selectColor);
 			glDrawElements(GL_LINES, object->GetIndexCount(), GL_UNSIGNED_INT, 0);
 		}
 	}

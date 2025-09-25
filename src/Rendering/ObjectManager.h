@@ -6,6 +6,7 @@
 #include "Object3D.h"
 #include "Sphere.h"
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>

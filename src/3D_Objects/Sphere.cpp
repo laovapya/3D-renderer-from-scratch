@@ -5,7 +5,6 @@ Sphere::Sphere(int segmentCount)
 	: Object3D()
 {
 	objectType = sphere;
-	isLit = true;
 	SetVAO(segmentCount);
 }
 VAO Sphere::GenerateVAO(int& indexCount, int segmentCount) const
@@ -17,56 +16,55 @@ VAO Sphere::GenerateVAO(int& indexCount, int segmentCount) const
 
 	std::vector<float> vertices;
 	std::vector<float> normals;
+	std::vector<float> texCoords;
 	std::vector<int> indices;
 
-	// Generate vertices and normals
+	auto pushVertex = [&](const Vector3& pos, const Vector3& norm, float u, float v) {
+		vertices.push_back(pos.x);
+		vertices.push_back(pos.y);
+		vertices.push_back(pos.z);
+		normals.push_back(norm.x);
+		normals.push_back(norm.y);
+		normals.push_back(norm.z);
+		texCoords.push_back(u);
+		texCoords.push_back(v);
+	};
+
 	for(int i = 0; i <= stacks; ++i)
 	{
-		float V = (float)i / (float)stacks;
+		float V = (float)i / stacks;
 		float phi = V * PI;
 
 		for(int j = 0; j <= slices; ++j)
 		{
-			float U = (float)j / (float)slices;
-			float theta = U * (PI * 2);
+			float U = (float)j / slices;
+			float theta = U * 2.0f * PI;
 
-			// Vertex position
-			float x = radius * cos(theta) * sin(phi);
-			float y = radius * cos(phi);
-			float z = radius * sin(theta) * sin(phi);
+			Vector3 pos{
+				radius * cos(theta) * sin(phi), radius * cos(phi), radius * sin(theta) * sin(phi)};
+			Vector3 norm{pos.x / radius, pos.y / radius, pos.z / radius};
 
-			// Normal (same as position for a unit sphere, just normalized)
-			float nx = x / radius;
-			float ny = y / radius;
-			float nz = z / radius;
-
-			vertices.push_back(x);
-			vertices.push_back(y);
-			vertices.push_back(z);
-
-			normals.push_back(nx);
-			normals.push_back(ny);
-			normals.push_back(nz);
+			pushVertex(pos, norm, U, 1.0f - V);
 		}
 	}
 
-	// Generate indices
 	for(int i = 0; i < slices * stacks + slices; ++i)
 	{
-		indices.push_back(int(i));
-		indices.push_back(int(i + slices + 1));
-		indices.push_back(int(i + slices));
-
-		indices.push_back(int(i + slices + 1));
-		indices.push_back(int(i));
-		indices.push_back(int(i + 1));
+		indices.push_back(i);
+		indices.push_back(i + slices + 1);
+		indices.push_back(i + slices);
+		indices.push_back(i + slices + 1);
+		indices.push_back(i);
+		indices.push_back(i + 1);
 	}
 
 	VBO vbo1(vertices.data(), sizeof(float) * vertices.size());
 	VBO vbo2(normals.data(), sizeof(float) * normals.size());
+	VBO vbo3(texCoords.data(), sizeof(float) * texCoords.size());
 	EBO ebo(indices.data(), sizeof(int) * indices.size());
+
 	VAO sphereVAO;
-	sphereVAO.Link(vbo1, vbo2, ebo);
+	sphereVAO.Link(vbo1, vbo2, vbo3, ebo);
 
 	indexCount = indices.size();
 	return sphereVAO;

@@ -2,13 +2,19 @@
 #include "Object3D.h"
 #include "ObjectManager.h"
 #include "Window.h"
+
+#include "DeltaTime.h"
+#include "VertexData.h"
 //This class renders all the objects in the scene
 class Scene
 {
 private:
 	//The scene is a part of window, so we need an window instance to run it.
 	const Window* window;
-	Camera* currentCamera;
+
+	std::unique_ptr<Camera> initialCamera = std::make_unique<Camera>();
+	Camera* currentCamera = initialCamera.get();
+
 	Object3D* currentLight;
 
 	//object manager and camera are a part of the scene, dont initialize these objects anywhere else.

@@ -18,7 +18,7 @@ void UI::DrawScene()
 
 	ImVec2 windowSize = ImGui::GetContentRegionAvail(); //all remaining available space
 
-	ImGui::Image((ImTextureID)((intptr_t)(window->GetColorTexture())),
+	ImGui::Image((ImTextureID)((intptr_t)(window->GetSceneTexture())),
 				 windowSize,
 				 ImVec2(0, 1),
 				 ImVec2(1, 0));
@@ -193,9 +193,39 @@ void UI::DrawTransformMenu()
 void UI::DrawColoringMenu()
 { //update this
 	ImGui::SetNextWindowSize(ImVec2(100, 300), ImGuiCond_FirstUseEver);
-	if(ImGui::Begin("Coloring", NULL, ImGuiWindowFlags_NoCollapse))
+	if(ImGui::Begin("Material constructor", NULL, ImGuiWindowFlags_NoCollapse))
 	{
-		ImGui::ColorPicker4("Coloring", colorBuffer);
+		ImGui::BeginChild("ColorPickerRegion", ImVec2(300, 300), true);
+		ImGui::ColorPicker4("##Coloring", colorBuffer, ImGuiColorEditFlags_NoSidePreview);
+		ImGui::EndChild();
+		ImGui::SameLine();
+		ImGui::BeginChild("TexturePreviewRegion", ImVec2(300, 300), true);
+		if(textureIDbuffer >= 0 && textureIDbuffer < (int)TextureManager::textures.size())
+		{
+			ImGui::Text("Preview:");
+			ImGui::Image((ImTextureID)(intptr_t)TextureManager::textures[textureIDbuffer],
+						 ImVec2(128, 128),
+						 ImVec2(0, 1),
+						 ImVec2(1, 0));
+		}
+		if(ImGui::Button("Load Texture"))
+		{
+			std::string path = GetTextureFilePath(); //time freezes
+			if(!path.empty())
+			{
+
+				textureIDbuffer = TextureManager::LoadTexture(path);
+				std::cout << textureIDbuffer;
+			}
+
+			else
+			{
+				std::cout << " empty!!!";
+				textureIDbuffer = 0;
+			}
+		}
+		ImGui::EndChild();
+		//std::cout << TextureManager::textures.size();
 
 		if(ImGui::Button("Apply", ImVec2(100, 20)))
 		{
@@ -204,14 +234,18 @@ void UI::DrawColoringMenu()
 			{
 				if(object->GetIfSelected())
 				{
-					object->SetColor(
+					Material& material = object->GetMaterial();
+					material.SetColor(
 						colorBuffer[0], colorBuffer[1], colorBuffer[2], colorBuffer[3]);
+
 					if(object->GetType() == Object3D::type::lightsource)
 					{
 						window->GetLitShader()->Activate();
 						window->GetLitShader()->SetLightColors(
 							objectManager->GetLightsourceColors());
 					}
+					else
+						material.SetTexture(textureIDbuffer);
 				}
 			}
 		}
@@ -222,4 +256,24 @@ void UI::DrawColoringMenu()
 int UI::GetSegmentCount() const
 {
 	return segmentsBuffer[0];
+}
+
+std::string UI::GetTextureFilePath()
+{
+	nfdu8char_t* outPath = nullptr;
+
+	nfdu8filteritem_t filters[2];
+	filters[0].name = (nfdu8char_t*)"Images";
+	filters[0].spec = (nfdu8char_t*)"png";
+	filters[1].name = (nfdu8char_t*)"Photos";
+	filters[1].spec = (nfdu8char_t*)"jpg,jpeg";
+
+	nfdresult_t result = NFD_OpenDialogU8(&outPath, filters, 2, nullptr);
+	if(result == NFD_OKAY)
+	{
+		std::string filePath = outPath;
+		NFD_FreePath(outPath);
+		return filePath;
+	}
+	return "";
 }

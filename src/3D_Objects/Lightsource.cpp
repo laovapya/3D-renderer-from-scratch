@@ -5,8 +5,7 @@ Lightsource::Lightsource()
 {
 
 	objectType = lightsource;
-	isLit = false;
-	SetColor(Vector3(1.0f, 0.65f, 0.0f), 1.0f); //bright orange
+	material = Material(Vector3(1.0f, 0.65f, 0.0f), 1.0f, false);
 	SetVAO(8);
 }
 

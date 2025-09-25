@@ -23,9 +23,11 @@ void Camera::Pan(Vector3 v)
 	right = Vector3::cross(worldUp, forward).normalized();
 	up = Vector3::cross(right, forward).normalized();
 
-	Vector3 offset = (right * v.x + up * v.y + forward * v.z) * panSpeed;
+	float distance = (target - position).magnitude();
+	float speed = panSpeed * distance * 0.1f;
+	Vector3 offset = (right * v.x + up * v.y + forward * v.z) * speed;
 	position += offset;
-	target += (right * v.x + up * v.y) * panSpeed;
+	target += (right * v.x + up * v.y) * speed;
 
 	view = Matrix4::LookAt(position, target, worldUp);
 }

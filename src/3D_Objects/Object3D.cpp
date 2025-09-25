@@ -27,6 +27,7 @@ Vector3 Object3D::GetScale() const
 
 Object3D::Object3D()
 {
+	material = Material(Vector3(1.0f, 1.0f, 0.6f), 1.0f, true);
 	id = idIncrement++;
 }
 
@@ -104,51 +105,55 @@ void Object3D::Scale(const float* const v)
 	Scale(Vector3(v[0], v[1], v[2]));
 }
 
-Matrix4 Object3D::GetObjectMatrix() const
+const Matrix4 Object3D::GetModelMatrix() const
 {
 	Matrix4 translation = Matrix4::translation(position);
-	Matrix4 rotationM = rotation.toMatrix4();
+	Matrix4 rotationM = Matrix4::Rotate(rotation);
 	Matrix4 scaling = Matrix4::scale(scale);
 
-	return translation * rotationM * scaling;
+	return scaling * rotationM * translation; //ensure correct order based on the Matrix4 * operator
 }
 
-Vector3 Object3D::GetBorderColor() const
-{
-	return selectColor;
-}
+// Vector3 Object3D::GetBorderColor() const
+// {
+// 	return selectColor;
+// }
 
-Vector3 Object3D::GetColor() const
-{
-	return color;
-}
+// Vector3 Object3D::GetColor() const
+// {
+// 	return material.color;
+// }
 
 Object3D::type Object3D::GetType() const
 {
 	return objectType;
 }
 
-const Vector3 Object3D::selectColor = Vector3(0.0f, 0.3f, 0.65f); // blue
+// const Vector3 Object3D::selectColor = Vector3(0.0f, 0.3f, 0.65f); // blue
 
-bool Object3D::GetIfLit() const
-{
-	return isLit;
-}
+// bool Object3D::GetIfLit() const
+// {
+// 	return material.isLit;
+// }
 
-void Object3D::SetColor(const Vector3& color)
-{
-	this->color = color;
-}
+// void Object3D::SetColor(const Vector3& color)
+// {
+// 	material.color = color;
+// }
 
-void Object3D::SetColor(const Vector3& color, float alpha)
+// void Object3D::SetColor(const Vector3& color, float alpha)
+// {
+// 	material.color = color;
+// 	material.colorAlpha = alpha;
+// }
+// void Object3D::SetColor(float r, float g, float b, float alpha)
+// {
+// 	material.color = Vector3(r, g, b);
+// 	material.colorAlpha = alpha;
+// }
+Material& Object3D::GetMaterial()
 {
-	this->color = color;
-	this->colorAlpha = alpha;
-}
-void Object3D::SetColor(float r, float g, float b, float alpha)
-{
-	color = Vector3(r, g, b);
-	colorAlpha = alpha;
+	return material;
 }
 
 void Object3D::SetSelected(bool selected)

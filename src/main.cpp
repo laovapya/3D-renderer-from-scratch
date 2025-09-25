@@ -21,8 +21,10 @@ int main()
 
 	while(true)
 	{
-		DeltaTime::SetDeltaTime(glfwGetTime());
+
 		window.EarlyUpdate();
+
+		DeltaTime::SetDeltaTime(glfwGetTime());
 		scene.Update();
 
 		ui.DrawScene();

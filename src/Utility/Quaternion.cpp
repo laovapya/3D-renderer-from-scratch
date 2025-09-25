@@ -59,33 +59,3 @@ Vector3 Quaternion::operator*(const Vector3& v) const
 
 	return Vector3(qr.x, qr.y, qr.z);
 }
-
-Matrix4 Quaternion::toMatrix4() const
-{
-	Quaternion q = this->normalized();
-
-	float xx = q.x * q.x;
-	float yy = q.y * q.y;
-	float zz = q.z * q.z;
-	float xy = q.x * q.y;
-	float xz = q.x * q.z;
-	float yz = q.y * q.z;
-	float wx = q.w * q.x;
-	float wy = q.w * q.y;
-	float wz = q.w * q.z;
-
-	Matrix4 m;
-	m.m[0][0] = 1.0f - 2.0f * (yy + zz);
-	m.m[0][1] = 2.0f * (xy - wz);
-	m.m[0][2] = 2.0f * (xz + wy);
-
-	m.m[1][0] = 2.0f * (xy + wz);
-	m.m[1][1] = 1.0f - 2.0f * (xx + zz);
-	m.m[1][2] = 2.0f * (yz - wx);
-
-	m.m[2][0] = 2.0f * (xz - wy);
-	m.m[2][1] = 2.0f * (yz + wx);
-	m.m[2][2] = 1.0f - 2.0f * (xx + yy);
-
-	return m;
-}

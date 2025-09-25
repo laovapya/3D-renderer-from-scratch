@@ -48,13 +48,14 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
 	glDeleteShader(fragmentShader);
 
 	viewMatrixLoc = glGetUniformLocation(ID, "viewMatrix");
-	localMatrixLoc = glGetUniformLocation(ID, "localMatrix");
+	modelMatrixLoc = glGetUniformLocation(ID, "modelMatrix");
 	colorLoc = glGetUniformLocation(ID, "color");
 	alphaLoc = glGetUniformLocation(ID, "alpha");
 	projectionLoc = glGetUniformLocation(ID, "projection");
 	lightAmountLoc = glGetUniformLocation(ID, "lightAmount");
 	lightPositionsLoc = glGetUniformLocation(ID, "lightPositions");
 	lightColorsLoc = glGetUniformLocation(ID, "lightColors");
+	textureSamplerLoc = glGetUniformLocation(ID, "textureSampler");
 }
 
 void Shader::Activate() const
@@ -86,14 +87,14 @@ void Shader::SetViewMatrix(const Matrix4& matrix) const
 	glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, matrix.data());
 }
 
-void Shader::SetLocalMatrix(const Matrix4& matrix) const
+void Shader::SetModelMatrix(const Matrix4& matrix) const
 {
-	if(localMatrixLoc == -1)
+	if(modelMatrixLoc == -1)
 	{
 		std::cout << "Failed to find local matrix uniform\n";
 		return;
 	}
-	glUniformMatrix4fv(localMatrixLoc, 1, GL_FALSE, matrix.data());
+	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, matrix.data());
 }
 
 void Shader::SetRenderColor(const Vector3& color) const
@@ -167,4 +168,20 @@ void Shader::SetLightUniforms(int amount,
 	SetLightAmount(amount);
 	SetLightColors(colors);
 	SetLightPositions(positions);
+}
+
+//for now all are bound to texture unit 0
+void Shader::ActivateTexture(GLuint textureID, GLuint unit) const
+{
+	if(textureSamplerLoc == -1)
+	{
+		std::cout << "Failed to find texture uniform: " << textureSamplerLoc << "\n";
+		return;
+	}
+
+	//glActiveTexture(GL_TEXTURE0 + unit); // select texture unit
+	//glBindTexture(GL_TEXTURE_2D, textureID);
+	glUniform1i(textureSamplerLoc, unit);
+
+	TextureManager::BindTexture(textureID, unit);
 }
